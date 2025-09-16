@@ -27,40 +27,48 @@
   <!-- Statistiques dynamiques -->
   <section id="stats">
     <h2>📊 Statistiques</h2>
-    <p id="player-count">Joueurs en ligne : ...</p>
-    <p id="uptime">Uptime : ...</p>
-    <p id="auctions">Enchères actives : ...</p>
+    <div id="stats-loader" class="loader"></div>
+    <p id="player-count" style="display:none;"></p>
+    <p id="uptime" style="display:none;"></p>
+    <p id="auctions" style="display:none;"></p>
   </section>
 
   <!-- Mods -->
   <section id="mods">
     <h2>🔧 Mods installés</h2>
-    <ul id="mods-list"></ul>
+    <div id="mods-loader" class="loader"></div>
+    <ul id="mods-list" style="display:none;"></ul>
   </section>
 
   <!-- Discord -->
   <section id="discord">
     <h2>💬 Rejoignez la communauté</h2>
-    <a href="https://discord.gg/TONLIEN" target="_blank" class="btn">Rejoindre le Discord</a>
+    <a href="https://discord.gg/8GBpJqb84A" target="_blank" class="btn">Rejoindre le Discord</a>
   </section>
 
   <!-- Don -->
   <section id="don">
     <h2>💸 Soutenir le projet</h2>
     <a href="https://www.paypal.me/RoxaneRubis" target="_blank" class="paypal-btn">
-      <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" 
-           alt="PayPal" />
+      <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" />
       <span>Faire un don</span>
     </a>
   </section>
 
   <script>
-    const API_URL = "https://atlant-ark-token.up.railway.app"; // 👉 Mets ici l'URL Railway de ton bot/API
+    const API_URL = "https://atlant-ark-token.up.railway.app"; // 👉 ton API Railway
 
     async function loadStats() {
       try {
         const res = await fetch(`${API_URL}/stats`);
         const data = await res.json();
+
+        // Masquer loader et afficher données
+        document.getElementById("stats-loader").style.display = "none";
+        document.getElementById("player-count").style.display = "block";
+        document.getElementById("uptime").style.display = "block";
+        document.getElementById("auctions").style.display = "block";
+
         document.getElementById("player-count").innerText = "Joueurs en ligne : " + data.players_online;
         document.getElementById("uptime").innerText = "Uptime : " + data.uptime;
         document.getElementById("auctions").innerText = "Enchères actives : " + data.active_auctions;
@@ -73,7 +81,12 @@
       try {
         const res = await fetch(`${API_URL}/mods`);
         const mods = await res.json();
+
+        // Masquer loader et afficher la liste
+        document.getElementById("mods-loader").style.display = "none";
         const list = document.getElementById("mods-list");
+        list.style.display = "block";
+
         list.innerHTML = "";
         mods.forEach(m => {
           const li = document.createElement("li");
@@ -90,4 +103,3 @@
   </script>
 </body>
 </html>
-
