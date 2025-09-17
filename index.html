@@ -168,7 +168,7 @@
       if (token) {
         // Sauvegarder le token et nettoyer l'URL
         localStorage.setItem('auth_token', token);
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.history.replaceState({}, document.title, window.location.origin + window.location.pathname);
         showNotification('Connexion réussie !', 'success');
       }
 
