@@ -5,58 +5,256 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atlant-Ark - Serveur ARK</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header avec authentification -->
   <header>
-    <h1>🌋 Atlant-Ark</h1>
-    <nav>
-      <a href="#stats">Statistiques</a>
-      <a href="#mods">Mods & Maps</a>
-      <a href="#discord">Discord</a>
-      <a href="#don">Soutenir</a>
-    </nav>
+    <div class="header-content">
+      <h1>🌋 Atlant-Ark</h1>
+      <nav>
+        <a href="#stats">Statistiques</a>
+        <a href="#mods">Mods & Maps</a>
+        <a href="#discord">Discord</a>
+        <a href="#don">Soutenir</a>
+      </nav>
+      <div class="auth-section">
+        <!-- Bouton de connexion Discord -->
+        <a href="#" class="discord-login-btn" id="login-btn" onclick="loginWithDiscord()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
+          Se connecter
+        </a>
+
+        <!-- Profil utilisateur connecté -->
+        <div class="user-profile" id="user-profile">
+          <div class="dropdown">
+            <div class="user-display">
+              <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+              <div class="user-info">
+                <span class="user-name" id="user-name">Chargement...</span>
+                <span class="user-balance" id="user-balance">💰 0 LC</span>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="dropdown-arrow">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            </div>
+            <div class="dropdown-content">
+              <a href="#" class="dropdown-item" onclick="showProfile()">👤 Mon Profil</a>
+              <a href="#" class="dropdown-item" onclick="showHistory()">📊 Historique</a>
+              <a href="#" class="dropdown-item" onclick="showSettings()">⚙️ Paramètres</a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item logout" onclick="logout()">🚪 Déconnexion</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <!-- Présentation -->
-  <section id="presentation">
-    <h2>Notre serveur</h2>
-    <p>Serveur communautaire ARK, stabilité garantie, ouvert à tous.</p>
+  <!-- Hero Section -->
+  <section id="presentation" class="hero">
+    <div class="container">
+      <h2>Notre serveur</h2>
+      <p>Serveur communautaire ARK avec une stabilité garantie, ouvert à tous les aventuriers prêts à explorer des mondes préhistoriques épiques !</p>
+    </div>
   </section>
 
   <!-- Statistiques dynamiques -->
-  <section id="stats">
-    <h2>📊 Statistiques</h2>
-    <div id="stats-loader" class="loader"></div>
-    <p id="player-count" style="display:none;"></p>
-    <p id="uptime" style="display:none;"></p>
-    <p id="auctions" style="display:none;"></p>
+  <section id="stats" class="card">
+    <div class="container">
+      <h2>📊 Statistiques du Serveur</h2>
+      <div id="stats-loader" class="loader"></div>
+      <div class="stats-grid" id="stats-content" style="display:none;">
+        <div class="stat-item">
+          <div class="status-indicator"></div>
+          <span class="stat-number" id="player-count">-</span>
+          <div class="stat-label">Joueurs en ligne</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="uptime">-</span>
+          <div class="stat-label">Temps de fonctionnement</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="auctions">-</span>
+          <div class="stat-label">Enchères actives</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="registered-players">-</span>
+          <div class="stat-label">Joueurs enregistrés</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard utilisateur (visible seulement si connecté) -->
+  <section id="user-dashboard" class="card auth-required" style="display:none;">
+    <div class="container">
+      <h2>🎮 Mon Dashboard Personnel</h2>
+      <div class="stats-grid">
+        <div class="stat-item user-stat">
+          <span class="stat-number" id="my-balance">-</span>
+          <div class="stat-label">Mon solde LC</div>
+        </div>
+        <div class="stat-item user-stat">
+          <span class="stat-number" id="my-wins">-</span>
+          <div class="stat-label">Enchères gagnées</div>
+        </div>
+        <div class="stat-item user-stat">
+          <span class="stat-number" id="my-rank">-</span>
+          <div class="stat-label">Mon classement</div>
+        </div>
+        <div class="stat-item user-stat">
+          <span class="stat-number" id="my-auctions">-</span>
+          <div class="stat-label">Mes participations</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Mods -->
-  <section id="mods">
-    <h2>🔧 Mods installés</h2>
-    <div id="mods-loader" class="loader"></div>
-    <ul id="mods-list" style="display:none;"></ul>
+  <section id="mods" class="card">
+    <div class="container">
+      <h2>🔧 Mods installés</h2>
+      <div id="mods-loader" class="loader"></div>
+      <div class="mods-grid" id="mods-list" style="display:none;"></div>
+    </div>
   </section>
 
   <!-- Discord -->
-  <section id="discord">
-    <h2>💬 Rejoignez la communauté</h2>
-    <a href="https://discord.gg/8GBpJqb84A" target="_blank" class="btn">Rejoindre le Discord</a>
+  <section id="discord" class="card">
+    <div class="container">
+      <h2>💬 Rejoignez la communauté</h2>
+      <p class="section-description">Connectez-vous avec d'autres joueurs, participez aux événements et restez informé des dernières nouveautés !</p>
+      <a href="https://discord.gg/8GBpJqb84A" target="_blank" class="btn btn-primary">
+        <span>🎮</span>
+        Rejoindre le Discord
+      </a>
+    </div>
   </section>
 
   <!-- Don -->
-  <section id="don">
-    <h2>💸 Soutenir le projet</h2>
-    <a href="https://www.paypal.me/RoxaneRubis" target="_blank" class="paypal-btn">
-      <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" />
-      <span>Faire un don</span>
-    </a>
+  <section id="don" class="card">
+    <div class="container">
+      <h2>💸 Soutenir le projet</h2>
+      <p class="section-description">Aidez-nous à maintenir le serveur en ligne et à améliorer l'expérience de jeu pour tous !</p>
+      <a href="https://www.paypal.me/RoxaneRubis" target="_blank" class="paypal-btn">
+        <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" />
+        <span>Faire un don</span>
+      </a>
+    </div>
   </section>
 
   <script>
-    const API_URL = "https://atlant-ark-token.up.railway.app"; // 👉 ton API Railway
+    const API_URL = "https://atlant-ark-token.up.railway.app";
+    let currentUser = null;
+
+    // Vérifier l'authentification au chargement
+    window.addEventListener('load', async () => {
+      // Vérifier si on a un token dans l'URL (retour OAuth)
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const error = urlParams.get('error');
+
+      if (error) {
+        console.error('Erreur auth:', error);
+        showNotification('Erreur de connexion: ' + error, 'error');
+        return;
+      }
+
+      if (token) {
+        // Sauvegarder le token et nettoyer l'URL
+        localStorage.setItem('auth_token', token);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        showNotification('Connexion réussie !', 'success');
+      }
+
+      // Vérifier si on a un token stocké
+      const savedToken = localStorage.getItem('auth_token');
+      if (savedToken) {
+        await verifyAndLoadUser(savedToken);
+      }
+
+      // Charger les données publiques
+      loadStats();
+      loadMods();
+    });
+
+    async function verifyAndLoadUser(token) {
+      try {
+        const response = await fetch(`${API_URL}/auth/verify`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.valid) {
+            currentUser = data.user;
+            showUserInterface();
+            await loadUserProfile();
+          }
+        } else {
+          // Token invalide, le supprimer
+          localStorage.removeItem('auth_token');
+        }
+      } catch (err) {
+        console.error('Erreur vérification token:', err);
+        localStorage.removeItem('auth_token');
+      }
+    }
+
+    function loginWithDiscord() {
+      window.location.href = `${API_URL}/auth/discord`;
+    }
+
+    function showUserInterface() {
+      document.getElementById('login-btn').style.display = 'none';
+      document.getElementById('user-profile').style.display = 'block';
+      
+      // Afficher le dashboard utilisateur
+      const dashboard = document.getElementById('user-dashboard');
+      dashboard.style.display = 'block';
+      dashboard.classList.remove('auth-required');
+    }
+
+    async function loadUserProfile() {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`${API_URL}/user/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const profile = await response.json();
+          
+          // Mettre à jour l'interface
+          document.getElementById('user-name').textContent = profile.username;
+          document.getElementById('user-balance').textContent = `💰 ${profile.balance} LC`;
+          
+          if (profile.avatar_url) {
+            document.getElementById('user-avatar').src = profile.avatar_url;
+            document.getElementById('user-avatar').style.display = 'block';
+          }
+
+          // Dashboard
+          document.getElementById('my-balance').textContent = profile.balance.toLocaleString();
+          document.getElementById('my-wins').textContent = profile.auction_wins;
+          document.getElementById('my-rank').textContent = profile.rank;
+          document.getElementById('my-auctions').textContent = profile.total_auctions;
+        }
+      } catch (err) {
+        console.error('Erreur profil:', err);
+      }
+    }
 
     async function loadStats() {
       try {
@@ -65,15 +263,17 @@
 
         // Masquer loader et afficher données
         document.getElementById("stats-loader").style.display = "none";
-        document.getElementById("player-count").style.display = "block";
-        document.getElementById("uptime").style.display = "block";
-        document.getElementById("auctions").style.display = "block";
+        document.getElementById("stats-content").style.display = "grid";
 
-        document.getElementById("player-count").innerText = "Joueurs en ligne : " + data.players_online;
-        document.getElementById("uptime").innerText = "Uptime : " + data.uptime;
-        document.getElementById("auctions").innerText = "Enchères actives : " + data.active_auctions;
+        document.getElementById("player-count").innerText = data.players_online;
+        document.getElementById("uptime").innerText = data.uptime;
+        document.getElementById("auctions").innerText = data.active_auctions;
+        document.getElementById("registered-players").innerText = data.registered_players;
       } catch (err) {
         console.error("Erreur stats:", err);
+        document.getElementById("stats-loader").style.display = "none";
+        document.getElementById("stats-content").innerHTML = '<p class="error-message">⚠️ Impossible de charger les statistiques</p>';
+        document.getElementById("stats-content").style.display = "block";
       }
     }
 
@@ -84,22 +284,119 @@
 
         // Masquer loader et afficher la liste
         document.getElementById("mods-loader").style.display = "none";
-        const list = document.getElementById("mods-list");
-        list.style.display = "block";
+        const grid = document.getElementById("mods-list");
+        grid.style.display = "grid";
 
-        list.innerHTML = "";
-        mods.forEach(m => {
-          const li = document.createElement("li");
-          li.textContent = m;
-          list.appendChild(li);
+        grid.innerHTML = "";
+        mods.forEach(mod => {
+          const div = document.createElement("div");
+          div.className = "mod-item";
+          div.textContent = mod;
+          grid.appendChild(div);
         });
       } catch (err) {
         console.error("Erreur mods:", err);
+        document.getElementById("mods-loader").style.display = "none";
+        document.getElementById("mods-list").innerHTML = '<p class="error-message">⚠️ Impossible de charger la liste des mods</p>';
+        document.getElementById("mods-list").style.display = "block";
       }
     }
 
-    loadStats();
-    loadMods();
+    function logout() {
+      localStorage.removeItem('auth_token');
+      currentUser = null;
+      
+      // Restaurer l'interface de connexion
+      document.getElementById('login-btn').style.display = 'flex';
+      document.getElementById('user-profile').style.display = 'none';
+      
+      // Masquer le dashboard
+      const dashboard = document.getElementById('user-dashboard');
+      dashboard.style.display = 'none';
+      dashboard.classList.add('auth-required');
+      
+      showNotification('Déconnecté avec succès', 'success');
+    }
+
+    function showProfile() {
+      showNotification('Page profil - En développement', 'info');
+    }
+
+    function showHistory() {
+      showNotification('Historique des enchères - En développement', 'info');
+    }
+
+    function showSettings() {
+      showNotification('Paramètres - En développement', 'info');
+    }
+
+    function showNotification(message, type = 'info') {
+      // Créer notification temporaire
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      
+      // Styles
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        z-index: 10000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      `;
+      
+      if (type === 'success') notification.style.background = '#00ff88';
+      else if (type === 'error') notification.style.background = '#ff6b35';
+      else notification.style.background = '#0099ff';
+      
+      document.body.appendChild(notification);
+      
+      // Animation d'entrée
+      setTimeout(() => notification.style.transform = 'translateX(0)', 10);
+      
+      // Suppression automatique
+      setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 3000);
+    }
+
+    // Auto-refresh des stats toutes les 30 secondes
+    function startAutoRefresh() {
+      setInterval(loadStats, 30000);
+    }
+
+    // Auto-refresh du profil utilisateur toutes les 2 minutes
+    function startUserRefresh() {
+      setInterval(() => {
+        if (currentUser) {
+          loadUserProfile();
+        }
+      }, 120000);
+    }
+
+    // Charger les données au démarrage
+    startAutoRefresh();
+    startUserRefresh();
+
+    // Smooth scroll pour la navigation
+    document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
   </script>
 </body>
 </html>
