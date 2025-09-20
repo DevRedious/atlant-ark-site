@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serveur - Atlant'ARK</title>
+  <link rel="icon" type="image/x-icon" href="assets/images/logo_atlant_ark.ico">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation horizontale -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/images/logo_atlant_ark.ico" alt="Atlant'ARK">
+        <span>Atlant'ARK</span>
+      </a>
+      
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Accueil</a></li>
+        <li><a href="serveur.html" class="nav-link active">Serveur</a></li>
+        <li><a href="mods.html" class="nav-link">Mods</a></li>
+        <li><a href="discord.html" class="nav-link">Discord</a></li>
+        <li><a href="support.html" class="nav-link">Support</a></li>
+      </ul>
 
+      <div class="nav-auth">
+        <div class="stats-badge">
+          <div class="online-dot"></div>
+          <span id="quick-players">0</span> en ligne
+        </div>
+        
+        <!-- Bouton de connexion -->
+        <button class="discord-login-btn" id="login-btn" onclick="loginWithDiscord()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
+          Se connecter
+        </button>
+
+        <!-- Profil utilisateur -->
+        <div class="user-profile" id="user-profile">
+          <div class="user-display" onclick="toggleUserMenu()">
+            <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+            <div>
+              <div class="user-name" id="user-name">Chargement...</div>
+              <div class="user-balance" id="user-balance">
+                <img src="assets/images/aqualis.png" class="currency-icon" alt="Aqualis"> 0
+              </div>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </div>
+          <div class="dropdown-menu" id="user-menu">
+            <a href="#" class="dropdown-item" onclick="showProfile()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+              Mon Profil
+            </a>
+            <a href="#" class="dropdown-item" onclick="showHistory()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19V1h-2v1H7V1H5v1H4.5C3.11 2 2 3.11 2 4.5v15C2 20.89 3.11 22 4.5 22h15c1.39 0 2.5-1.11 2.5-2.5v-15C22 3.11 20.89 2 19.5 2z"/>
+              </svg>
+              Historique
+            </a>
+            <a href="#" class="dropdown-item logout" onclick="logout()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+              </svg>
+              Déconnexion
+            </a>
+          </div>
+        </div>
+
+        <div class="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Section Statistiques -->
+  <main class="page-content">
+    <div class="container">
+      <header class="page-header">
+        <h1 class="page-title">Statistiques du Serveur</h1>
+        <p class="page-subtitle">Données en temps réel de notre serveur Atlant'ARK</p>
+      </header>
+      
+      <div id="stats-loader" class="loader"></div>
+      <div class="stats-grid" id="stats-content" style="display:none;">
+        <div class="card">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+          <div class="card-number" id="player-count">-</div>
+          <div class="card-label">Joueurs en ligne</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+            </svg>
+          </div>
+          <div class="card-number" id="uptime">-</div>
+          <div class="card-label">Temps de fonctionnement</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+            </svg>
+          </div>
+          <div class="card-number" id="auctions">-</div>
+          <div class="card-label">Enchères actives</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16,4C18.11,4 20.11,4.89 21.39,6.39L22.5,5.5C22.92,5.14 23.5,5.46 23.5,6V10.5C23.5,10.78 23.28,11 23,11H18.5C18.04,11 17.72,10.42 18.08,10L19.31,8.69C18.54,7.95 17.56,7.5 16.5,7.5C14.69,7.5 13.19,8.96 13.19,10.75C13.19,12.54 14.69,14 16.5,14C17.24,14 17.92,13.78 18.5,13.36L20.13,15.36C19.18,16.04 18.11,16.5 17,16.5C13.42,16.5 10.5,13.58 10.5,10S13.42,3.5 17,3.5H16Z"/>
+            </svg>
+          </div>
+          <div class="card-number" id="registered-players">-</div>
+          <div class="card-label">Joueurs enregistrés</div>
+        </div>
+      </div>
+
+      <!-- Dashboard utilisateur (affiché si connecté) -->
+      <section id="user-dashboard" class="dashboard-section" style="display:none;">
+        <header class="section-header">
+          <h2 class="section-title">Mon Dashboard</h2>
+          <p class="section-subtitle">Vos statistiques personnelles</p>
+        </header>
+        
+        <div class="dashboard-grid">
+          <div class="card balance-card">
+            <div class="card-header">
+              <h3>Mon Solde</h3>
+              <img src="assets/images/aqualis.png" class="currency-icon large" alt="Aqualis">
+            </div>
+            <div class="card-content">
+              <span class="balance-amount" id="my-balance">0</span>
+              <span class="balance-label">Aqualis</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Enchères Gagnées</h3>
+              <div class="card-icon trophy">🏆</div>
+            </div>
+            <div class="card-content">
+              <span class="card-number" id="my-wins">0</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Mon Classement</h3>
+              <div class="card-icon rank">📊</div>
+            </div>
+            <div class="card-content">
+              <span class="card-number" id="my-rank">#-</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Participations</h3>
+              <div class="card-icon participation">🎯</div>
+            </div>
+            <div class="card-content">
+              <span class="card-number" id="my-auctions">0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/stats.js"></script>
+</body>
+</html>
