@@ -1,50 +1,74 @@
 // ===========================================
-// MENU MOBILE - FONCTIONNALITÉ BURGER
-// À ajouter dans vos fichiers HTML ou dans un JS séparé
+// MENU MOBILE - VERSION CORRIGÉE
 // ===========================================
 
+// Variables globales
+let mobileMenu, navMenu, overlay;
+
+// Fonction toggleMenu exposée globalement
+function toggleMenu() {
+  const isActive = navMenu.classList.contains('active');
+
+  if (isActive) {
+    closeMenu();
+  } else {
+    openMenu();
+  }
+}
+
+// Fonction pour ouvrir le menu
+function openMenu() {
+  navMenu.classList.add('active');
+  mobileMenu.classList.add('active');
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // 🔹 Mise à jour ARIA
+  mobileMenu.setAttribute('aria-expanded', 'true');
+  navMenu.setAttribute('aria-hidden', 'false');
+}
+
+// Fonction pour fermer le menu
+function closeMenu() {
+  navMenu.classList.remove('active');
+  mobileMenu.classList.remove('active');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+
+  // 🔹 Mise à jour ARIA
+  mobileMenu.setAttribute('aria-expanded', 'false');
+  navMenu.setAttribute('aria-hidden', 'true');
+}
+
+
+// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
-  const mobileMenu = document.querySelector('.mobile-menu');
-  const navMenu = document.querySelector('.nav-menu');
-  const body = document.body;
+  mobileMenu = document.querySelector('.mobile-menu');
+  navMenu = document.querySelector('.nav-menu');
+  
+  // Créer l'overlay s'il n'existe pas
+  overlay = document.querySelector('.mobile-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'mobile-overlay';
+    document.body.appendChild(overlay);
+  }
 
-  // Créer l'overlay
-  const overlay = document.createElement('div');
-  overlay.className = 'mobile-overlay';
-  body.appendChild(overlay);
-
-  // Fonction pour toggler le menu
-  function toggleMenu() {
-    const isActive = navMenu.classList.contains('active');
-    
-    if (isActive) {
-      // Fermer le menu
-      navMenu.classList.remove('active');
-      mobileMenu.classList.remove('active');
-      overlay.classList.remove('active');
-      body.style.overflow = '';
-    } else {
-      // Ouvrir le menu
-      navMenu.classList.add('active');
-      mobileMenu.classList.add('active');
-      overlay.classList.add('active');
-      body.style.overflow = 'hidden'; // Empêche le scroll
-    }
+  // Vérifier que les éléments existent
+  if (!mobileMenu || !navMenu) {
+    console.warn('Éléments de navigation mobile non trouvés');
+    return;
   }
 
   // Event listeners
-  if (mobileMenu) {
-    mobileMenu.addEventListener('click', toggleMenu);
-  }
-
-  // Fermer le menu en cliquant sur l'overlay
+  mobileMenu.addEventListener('click', toggleMenu);
   overlay.addEventListener('click', toggleMenu);
 
   // Fermer le menu en cliquant sur un lien
   const navLinks = document.querySelectorAll('.nav-link');
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
         toggleMenu();
       }
     });
@@ -52,11 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Fermer le menu si on redimensionne vers desktop
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
+    if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
       navMenu.classList.remove('active');
       mobileMenu.classList.remove('active');
       overlay.classList.remove('active');
-      body.style.overflow = '';
+      document.body.style.overflow = '';
     }
   });
 
@@ -74,74 +98,26 @@ document.addEventListener('DOMContentLoaded', function() {
       toggleMenu();
     }
   });
-});
 
-// ===========================================
-// AMÉLIORATION DE L'ACCESSIBILITÉ MOBILE
-// ===========================================
+  // Attributs ARIA pour l'accessibilité
+  mobileMenu.setAttribute('aria-label', 'Menu principal');
+  mobileMenu.setAttribute('aria-expanded', 'false');
+  mobileMenu.setAttribute('role', 'button');
+  mobileMenu.setAttribute('tabindex', '0');
+  navMenu.setAttribute('aria-hidden', 'true');
 
-// Ajout d'attributs ARIA pour l'accessibilité
-document.addEventListener('DOMContentLoaded', function() {
-  const mobileMenu = document.querySelector('.mobile-menu');
-  const navMenu = document.querySelector('.nav-menu');
-
-  if (mobileMenu && navMenu) {
-    // Attributs ARIA
-    mobileMenu.setAttribute('aria-label', 'Menu principal');
-    mobileMenu.setAttribute('aria-expanded', 'false');
-    mobileMenu.setAttribute('role', 'button');
-    mobileMenu.setAttribute('tabindex', '0');
-
-    navMenu.setAttribute('aria-hidden', 'true');
-
-    // Mise à jour des attributs lors du toggle
-    const originalToggle = toggleMenu;
-    toggleMenu = function() {
-      originalToggle();
-      const isActive = navMenu.classList.contains('active');
-      mobileMenu.setAttribute('aria-expanded', isActive.toString());
-      navMenu.setAttribute('aria-hidden', (!isActive).toString());
-    };
-
-    // Support du clavier
-    mobileMenu.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleMenu();
-      }
-    });
-  }
-});
-
-// ===========================================
-// OPTIMISATION DES PERFORMANCES MOBILE
-// ===========================================
-
-// Détection mobile pour optimisations
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-if (isMobile) {
-  // Désactive certaines animations coûteuses sur mobile
-  document.documentElement.style.setProperty('--transition', 'all 0.2s ease');
-  
-  // Lazy loading plus agressif sur mobile
-  const images = document.querySelectorAll('img[loading="lazy"]');
-  images.forEach(img => {
-    img.loading = 'lazy';
+  // Support du clavier
+  mobileMenu.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMenu();
+    }
   });
-}
+});
 
-// ===========================================
-// GESTION DE L'ORIENTATION
-// ===========================================
-
+// Gestion de l'orientation
 window.addEventListener('orientationchange', () => {
-  // Force la fermeture du menu lors du changement d'orientation
   setTimeout(() => {
-    const navMenu = document.querySelector('.nav-menu');
-    const mobileMenu = document.querySelector('.mobile-menu');
-    const overlay = document.querySelector('.mobile-overlay');
-    
     if (navMenu && navMenu.classList.contains('active')) {
       navMenu.classList.remove('active');
       if (mobileMenu) mobileMenu.classList.remove('active');
@@ -151,11 +127,7 @@ window.addEventListener('orientationchange', () => {
   }, 100);
 });
 
-// ===========================================
-// TOUCHES TACTILES AMÉLIORÉES
-// ===========================================
-
-// Ajoute des effets tactiles aux boutons
+// Effets tactiles pour les boutons
 document.addEventListener('DOMContentLoaded', function() {
   const touchButtons = document.querySelectorAll('.btn-primary, .btn-secondary, .nav-link, .card');
   
@@ -170,11 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// ===========================================
-// VIEWPORT DYNAMIQUE POUR MOBILE
-// ===========================================
-
-// Corrige les problèmes de viewport sur mobile
+// Viewport dynamique pour mobile
 function setViewportHeight() {
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -185,3 +153,6 @@ window.addEventListener('resize', setViewportHeight);
 window.addEventListener('orientationchange', () => {
   setTimeout(setViewportHeight, 100);
 });
+
+// Exposer la fonction globalement
+window.toggleMenu = toggleMenu;
