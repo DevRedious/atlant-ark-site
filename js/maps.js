@@ -237,13 +237,26 @@ async function loadMaps() {
     
     // Animer l'apparition des cartes
     animateMapCards();
-    
+
+    // ✅ Gérer l'apparition progressive des images après création
+    const images = mapsGrid.querySelectorAll(".map-image[loading='lazy']");
+    images.forEach(img => {
+      if (img.complete) {
+        img.classList.add("loaded");
+      } else {
+        img.addEventListener("load", () => {
+          img.classList.add("loaded");
+        });
+      }
+    });
+
     console.log("Cartes chargées avec succès (mode statique)");
   } catch (err) {
     console.error("Erreur lors du chargement des cartes:", err);
     handleMapsError();
   }
 }
+
 
 function createClusterHeader(container) {
   const clusterMaps = ATLANTARK_MAPS.filter(map => !map.standalone);
@@ -335,6 +348,7 @@ function createMapCard(map, index) {
            alt="${map.name}" 
            class="map-image" 
            loading="lazy"
+           onload="this.classList.add('loaded')"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
       <div class="map-placeholder" style="display:none;">
         <span class="map-icon">🗺️</span>
@@ -372,6 +386,7 @@ function createMapCard(map, index) {
   
   return mapElement;
 }
+
 
 // ===========================
 // INTERACTIONS ET ACTIONS
