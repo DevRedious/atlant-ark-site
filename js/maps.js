@@ -220,8 +220,8 @@ async function loadMaps() {
     mapsGrid.style.display = "block";
     mapsGrid.innerHTML = "";
 
-    // Charger les données en temps réel depuis l'API
-    await loadRealTimeMapData();
+    // PAS D'APPEL API - Mode statique uniquement
+    console.log("Mode statique - API désactivée pour les cartes");
     
     // Créer le header avec les statistiques du cluster
     createClusterHeader(mapsGrid);
@@ -238,7 +238,7 @@ async function loadMaps() {
     // Animer l'apparition des cartes
     animateMapCards();
     
-    console.log("Cartes chargées avec succès");
+    console.log("Cartes chargées avec succès (mode statique)");
   } catch (err) {
     console.error("Erreur lors du chargement des cartes:", err);
     handleMapsError();
@@ -314,48 +314,11 @@ function createStandaloneMapsSection(container) {
   container.appendChild(standaloneSection);
 }
 
+// FONCTION DÉSACTIVÉE - Plus d'appels API
 async function loadRealTimeMapData() {
-  // API DÉSACTIVÉE - En attente de configuration
-  // Aucune simulation de joueurs pour éviter la confusion
-  console.log("Mode développement - API désactivée, aucune donnée de joueurs affichée");
-  
-  /* 
-  TODO: QUAND L'API SERA PRÊTE, REMPLACER PAR :
-  
-  try {
-    const response = await fetch(`${API_URL}/maps/status`);
-    if (response.ok) {
-      const data = await response.json();
-      
-      // Structure attendue de l'API :
-      // {
-      //   "maps": [
-      //     {
-      //       "id": "the_island",
-      //       "status": "online",
-      //       "players": 12,
-      //       "maxPlayers": 70
-      //     },
-      //     ...
-      //   ]
-      // }
-      
-      data.maps?.forEach(apiMap => {
-        const allMaps = [...ATLANTARK_MAPS, ...STANDALONE_MAPS];
-        const map = allMaps.find(m => m.id === apiMap.id);
-        if (map) {
-          map.players = apiMap.players || 0;
-          map.status = apiMap.status || 'online';
-          map.maxPlayers = apiMap.maxPlayers || 70;
-        }
-      });
-      
-      console.log("Données des cartes mises à jour depuis l'API");
-    }
-  } catch (error) {
-    console.log("Erreur API - utilisation des statuts par défaut");
-  }
-  */
+  // API COMPLÈTEMENT DÉSACTIVÉE
+  console.log("API désactivée - aucun appel réseau effectué");
+  return Promise.resolve();
 }
 
 function createMapCard(map, index) {
@@ -452,20 +415,6 @@ function showMapDetails(mapId) {
         
         <div class="modal-sections">
           <div class="modal-section">
-            <h3>🌍 Biomes</h3>
-            <div class="biomes-list">
-              ${map.biomes.map(biome => `<span class="biome-tag">${biome}</span>`).join('')}
-            </div>
-          </div>
-          
-          <div class="modal-section">
-            <h3>👹 Boss</h3>
-            <div class="bosses-list">
-              ${map.bosses.map(boss => `<span class="boss-tag">${boss}</span>`).join('')}
-            </div>
-          </div>
-          
-          <div class="modal-section">
             <h3>✨ Caractéristiques</h3>
             <ul class="features-list">
               ${map.features.map(feature => `<li>${feature}</li>`).join('')}
@@ -501,8 +450,8 @@ function closeMapModal() {
 // ===========================
 
 function updateClusterStats() {
-  // Plus de stats de joueurs à mettre à jour
-  console.log("Mode développement - statistiques statiques affichées");
+  // Mode statique - pas de mise à jour des stats
+  console.log("Mode statique - statistiques fixes affichées");
 }
 
 // ===========================
@@ -545,7 +494,7 @@ function filterMapsByDifficulty(difficulty) {
   const mapCards = document.querySelectorAll('.map-card');
   
   mapCards.forEach(card => {
-    const mapDifficulty = card.querySelector('.map-difficulty').textContent.toLowerCase();
+    const mapDifficulty = card.querySelector('.map-difficulty')?.textContent.toLowerCase() || '';
     
     if (difficulty === 'all' || mapDifficulty.includes(difficulty.toLowerCase())) {
       card.style.display = '';
@@ -585,7 +534,7 @@ function handleMapsError() {
 }
 
 // ===========================
-// AUTO-REFRESH ET INITIALISATION
+// AUTO-REFRESH DÉSACTIVÉ
 // ===========================
 
 // Chargement initial des cartes si on est sur la page maps
@@ -596,22 +545,8 @@ if (window.location.pathname.includes('maps.html') ||
     loadMaps();
   });
   
-  // Auto-refresh des données des cartes toutes les 30 secondes
-  setInterval(() => {
-    console.log("Actualisation automatique des cartes...");
-    loadRealTimeMapData().then(() => {
-      updateClusterStats();
-      // Réactualiser l'affichage des cartes
-      const mapsGrid = document.getElementById('maps-grid');
-      if (mapsGrid && mapsGrid.style.display !== 'none') {
-        mapsGrid.innerHTML = '';
-        ATLANTARK_MAPS.forEach((map, index) => {
-          const mapElement = createMapCard(map, index);
-          mapsGrid.appendChild(mapElement);
-        });
-      }
-    });
-  }, 30000);
+  // AUTO-REFRESH COMPLÈTEMENT DÉSACTIVÉ
+  console.log("Auto-refresh désactivé - mode statique uniquement");
 }
 
 // ===========================
@@ -619,7 +554,7 @@ if (window.location.pathname.includes('maps.html') ||
 // ===========================
 
 function refreshMaps() {
-  console.log("Actualisation manuelle des cartes...");
+  console.log("Actualisation manuelle des cartes (mode statique)...");
   loadMaps();
 }
 
@@ -632,7 +567,14 @@ function getOnlineMaps() {
 }
 
 function getTotalPlayers() {
-  return ATLANTARK_MAPS.reduce((sum, map) => sum + map.players, 0);
+  // Retourne 0 en mode statique
+  return 0;
+}
+
+// Fonction utilitaire pour afficher une notification
+function showNotification(message, type = 'info') {
+  console.log(`Notification (${type}): ${message}`);
+  // Vous pouvez implémenter un système de notification visuel ici
 }
 
 // Exposer les fonctions globalement pour l'utilisation dans d'autres scripts
