@@ -127,8 +127,32 @@ const ATLANTARK_MODS = [
 ];
 
 // ===========================
-// NAVIGATION
+// NAVIGATION PAR SECTIONS
 // ===========================
+
+function showSection(sectionId) {
+  // Masquer toutes les sections
+  const sections = document.querySelectorAll('.section, .hero');
+  sections.forEach(section => {
+    section.style.display = 'none';
+  });
+  
+  // Afficher la section demandée
+  const targetSection = document.getElementById(sectionId);
+  if (targetSection) {
+    targetSection.style.display = 'block';
+  }
+  
+  // Mettre à jour la navigation active
+  setActiveNav(sectionId);
+  
+  // Charger les données si nécessaire
+  if (sectionId === 'stats') {
+    loadStats();
+  } else if (sectionId === 'mods') {
+    loadMods();
+  }
+}
 
 function setActiveNav(targetId) {
   document.querySelectorAll('.nav-link').forEach(link => {
@@ -140,16 +164,12 @@ function setActiveNav(targetId) {
   }
 }
 
-// Smooth scroll et navigation active
+// Navigation par sections au lieu de smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', function(e) {
     e.preventDefault();
     const targetId = this.getAttribute('href').substring(1);
-    const target = document.getElementById(targetId);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-      setActiveNav(targetId);
-    }
+    showSection(targetId);
   });
 });
 
@@ -431,24 +451,8 @@ window.addEventListener('load', async () => {
     await verifyAndLoadUser(savedToken);
   }
 
-  // Chargement initial des données
-  loadStats();
-  loadMods();
-
-  // Intersection Observer pour la navigation active
-  const sections = document.querySelectorAll('section[id]');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        setActiveNav(entry.target.id);
-      }
-    });
-  }, { 
-    threshold: 0.3,
-    rootMargin: '-60px 0px -40% 0px'
-  });
-
-  sections.forEach(section => observer.observe(section));
+  // Afficher uniquement la section hero au démarrage
+  showSection('hero');
 });
 
 // Auto-refresh des statistiques toutes les 30 secondes
