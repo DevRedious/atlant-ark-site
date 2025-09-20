@@ -1806,3 +1806,622 @@ input:focus {
   flex: 1;
   margin-bottom: 1rem;
 }
+
+/* ===========================================
+   STYLES POUR LA PAGE DES CARTES
+   À ajouter à la fin de votre style.css
+   =========================================== */
+
+/* ===========================================
+   CLUSTER OVERVIEW
+   =========================================== */
+
+.cluster-overview {
+  margin-bottom: 3rem;
+}
+
+.cluster-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.cluster-stat {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  min-width: 150px;
+  transition: var(--transition);
+}
+
+.cluster-stat:hover {
+  border-color: var(--neon-green);
+  box-shadow: var(--shadow-neon);
+  transform: translateY(-2px);
+}
+
+.cluster-stat .stat-number {
+  font-family: 'Orbitron', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--neon-green);
+  text-shadow: 0 0 15px var(--neon-green);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.cluster-stat .stat-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ===========================================
+   GRILLE DES CARTES
+   =========================================== */
+
+.maps-section {
+  margin-bottom: 3rem;
+}
+
+.maps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.map-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-card:hover {
+  border-color: var(--neon-green);
+  box-shadow: var(--shadow-neon);
+  transform: translateY(-5px);
+}
+
+.map-card[data-status="maintenance"] {
+  border-color: #ffaa00;
+}
+
+.map-card[data-status="offline"] {
+  border-color: #ff4444;
+  opacity: 0.7;
+}
+
+.map-card[data-status="restarting"] {
+  border-color: #00aaff;
+}
+
+/* ===========================================
+   IMAGE ET BADGES DES CARTES
+   =========================================== */
+
+.map-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.map-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.map-card:hover .map-image {
+  transform: scale(1.05);
+}
+
+.map-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--card-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--text-muted);
+}
+
+.map-status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  z-index: 2;
+}
+
+.map-players-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  z-index: 2;
+}
+
+/* ===========================================
+   CONTENU DES CARTES
+   =========================================== */
+
+.map-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.map-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+}
+
+.map-difficulty {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.difficulty-facile {
+  background: rgba(0, 255, 65, 0.2);
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+}
+
+.difficulty-modéré {
+  background: rgba(255, 170, 0, 0.2);
+  color: #ffaa00;
+  border: 1px solid #ffaa00;
+}
+
+.difficulty-difficile {
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff4444;
+  border: 1px solid #ff4444;
+}
+
+.difficulty-très-difficile {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8b5cf6;
+  border: 1px solid #8b5cf6;
+}
+
+.difficulty-extrême {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff0000;
+  border: 1px solid #ff0000;
+}
+
+.map-description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+/* ===========================================
+   DÉTAILS ET CARACTÉRISTIQUES
+   =========================================== */
+
+.map-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 65, 0.05);
+  border-radius: 8px;
+}
+
+.map-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.detail-icon {
+  font-size: 1rem;
+}
+
+.map-features {
+  margin-bottom: 1.5rem;
+}
+
+.map-features h4 {
+  color: var(--neon-green);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.map-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.map-features li {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.map-features li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--neon-green);
+}
+
+/* ===========================================
+   ACTIONS ET BOUTONS
+   =========================================== */
+
+.map-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.map-join-btn,
+.map-info-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  justify-content: center;
+}
+
+.map-join-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--text-muted);
+  border-color: var(--text-muted);
+}
+
+.map-join-btn.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===========================================
+   ACTIVITÉ DES JOUEURS
+   =========================================== */
+
+.player-activity {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.activity-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.activity-fill {
+  height: 100%;
+  background: var(--gradient-neon);
+  border-radius: 3px;
+  transition: var(--transition);
+}
+
+.activity-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  display: block;
+}
+
+/* ===========================================
+   MODAL DES DÉTAILS
+   =========================================== */
+
+.map-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.map-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  border: 1px solid var(--neon-green);
+  border-radius: var(--border-radius);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-neon-strong);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+  font-family: 'Orbitron', monospace;
+  color: var(--neon-green);
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-map-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.modal-sections {
+  space-y: 1.5rem;
+}
+
+.modal-section {
+  margin-bottom: 1.5rem;
+}
+
+.modal-section h3 {
+  color: var(--neon-green);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.biomes-list,
+.bosses-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.biome-tag,
+.boss-tag {
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 255, 65, 0.1);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: var(--neon-green);
+}
+
+.boss-tag {
+  background: rgba(255, 68, 68, 0.1);
+  border-color: rgba(255, 68, 68, 0.3);
+  color: #ff4444;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+}
+
+.features-list li {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.features-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--neon-green);
+  font-weight: bold;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ===========================================
+   INFORMATIONS SUR LES TRANSFERTS
+   =========================================== */
+
+.transfer-info {
+  margin-top: 3rem;
+}
+
+.info-card.large {
+  background: rgba(0, 255, 65, 0.05);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+}
+
+.info-card.large h3 {
+  color: var(--neon-green);
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.transfer-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.transfer-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.transfer-item:hover {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+}
+
+.transfer-icon {
+  font-size: 1.5rem;
+  min-width: 1.5rem;
+}
+
+.transfer-item strong {
+  color: var(--neon-green);
+}
+
+/* ===========================================
+   RESPONSIVE POUR LES CARTES
+   =========================================== */
+
+@media (max-width: 768px) {
+  .maps-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .cluster-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .map-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .map-difficulty {
+    align-self: flex-start;
+  }
+  
+  .map-details {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .map-actions {
+    flex-direction: column;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .transfer-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-card {
+    margin: 0 0.5rem;
+  }
+  
+  .map-content {
+    padding: 1rem;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 1rem;
+  }
+}
