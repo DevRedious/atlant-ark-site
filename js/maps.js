@@ -7,121 +7,165 @@ const ATLANTARK_MAPS = [
     id: "the_island",
     name: "The Island",
     description: "La carte originale d'ARK, parfaite pour débuter votre aventure.",
-    image: "the_island.jpg",
+    image: "the_island.png",
     status: "online",
     players: 0,
     maxPlayers: 70,
-    difficulty: "Facile",
-    size: "Grande",
-    biomes: ["Forêt", "Plage", "Montagne", "Volcan", "Marais"],
-    bosses: ["Broodmother", "Megapithecus", "Dragon", "Overseer"],
     features: [
       "Carte idéale pour débuter",
       "Toutes les ressources disponibles",
-      "Grottes variées et donjons",
-      "Arènes de boss classiques"
-    ],
-    launchCommand: "steam://connect/your-server-ip:7777"
+      "Grottes variées et donjons"
+    ]
   },
   {
-    id: "scorched_earth",
-    name: "Scorched Earth",
-    description: "Un désert impitoyable avec des créatures uniques et des défis extrêmes.",
-    image: "scorched_earth.jpg",
+    id: "the_island_event",
+    name: "The Island Event",
+    description: "Version événementielle de The Island avec des créatures spéciales et des récompenses exclusives.",
+    image: "the_island_event.png",
     status: "online",
     players: 0,
     maxPlayers: 70,
-    difficulty: "Difficile",
-    size: "Grande",
-    biomes: ["Désert", "Oasis", "Dunes", "Badlands", "Canyons"],
-    bosses: ["Manticore"],
     features: [
-      "Tempêtes de sable mortelles",
-      "Système de températures extrêmes",
-      "Créatures du désert uniques",
-      "Ressources spécialisées (pétrole, soufre)"
+      "Événements saisonniers actifs",
+      "Créatures colorées spéciales",
+      "Récompenses événementielles"
     ],
-    launchCommand: "steam://connect/your-server-ip:7779"
+    special: true,
+    eventType: "Carte Événementielle"
   },
   {
-    id: "aberration",
-    name: "Aberration",
-    description: "Un monde souterrain radioactif rempli de créatures mutantes.",
-    image: "aberration.jpg",
+    id: "the_center",
+    name: "The Center",
+    description: "Une carte massive avec des biomes variés et des structures impressionnantes.",
+    image: "the_center.png",
     status: "online",
     players: 0,
     maxPlayers: 70,
-    difficulty: "Très Difficile",
-    size: "Grande",
-    biomes: ["Zone Fertile", "Zone Bleue", "Zone Rouge", "Surface"],
-    bosses: ["Rockwell"],
     features: [
-      "Aucune créature volante",
-      "Système de radiations",
-      "Escalade et ziplines",
-      "Créatures luminescentes"
+      "Île flottante centrale",
+      "Ponts naturels spectaculaires",
+      "Biomes extrêmement variés"
+    ]
+  },
+  {
+    id: "ragnarok",
+    name: "Ragnarok",
+    description: "Une carte nordique épique avec des paysages à couper le souffle.",
+    image: "ragnarok.png",
+    status: "online",
+    players: 0,
+    maxPlayers: 70,
+    features: [
+      "Paysages nordiques épiques",
+      "Châteaux et ruines vikings",
+      "Wyverns et leurs œufs"
+    ]
+  },
+  {
+    id: "valguero",
+    name: "Valguero",
+    description: "Disponible à sa sortie ! Une carte communautaire avec des biomes uniques.",
+    image: "valguero.png",
+    status: "coming_soon",
+    players: 0,
+    maxPlayers: 70,
+    features: [
+      "Disponible à sa sortie !",
+      "Zone aberrante intégrée",
+      "Grottes de cristal uniques"
     ],
-    launchCommand: "steam://connect/your-server-ip:7781"
+    comingSoon: true
   },
   {
     id: "extinction",
     name: "Extinction",
     description: "Une Terre post-apocalyptique avec des titans colossaux.",
-    image: "extinction.jpg",
+    image: "extinction.png",
     status: "online",
     players: 0,
     maxPlayers: 70,
-    difficulty: "Extrême",
-    size: "Grande",
-    biomes: ["Ville en Ruines", "Wasteland", "Desert Dome", "Snow Dome", "Forest"],
-    bosses: ["Desert Titan", "Forest Titan", "Ice Titan", "King Titan"],
     features: [
       "Mechs pilotables",
       "Titans géants",
-      "Vagues d'extinction",
       "Technologie avancée"
-    ],
-    launchCommand: "steam://connect/your-server-ip:7783"
+    ]
   },
   {
-    id: "genesis",
-    name: "Genesis Part 1",
-    description: "Simulation de biomes avec missions et défis guidés par HLN-A.",
-    image: "genesis.jpg",
+    id: "lost_city",
+    name: "Lost City",
+    description: "Une cité perdue mystérieuse avec des secrets anciens à découvrir.",
+    image: "lost_city.png",
     status: "online",
     players: 0,
     maxPlayers: 70,
-    difficulty: "Modéré",
-    size: "Grande",
-    biomes: ["Bog", "Arctic", "Volcanic", "Ocean", "Lunar"],
-    bosses: ["Moeder"],
     features: [
-      "Système de missions",
-      "Biomes séparés",
-      "Téléportation entre zones",
-      "Récompenses de missions"
-    ],
-    launchCommand: "steam://connect/your-server-ip:7785"
+      "Architecture ancienne mystérieuse",
+      "Artefacts rares cachés",
+      "Créatures légendaires"
+    ]
   },
   {
-    id: "genesis2",
-    name: "Genesis Part 2",
-    description: "Un vaisseau spatial massif avec des biomes artificiels.",
-    image: "genesis2.jpg",
-    status: "maintenance",
+    id: "amissa",
+    name: "Amissa",
+    description: "Une carte tropicale luxuriante avec des îles paradisiaques.",
+    image: "amissa.png",
+    status: "online",
     players: 0,
     maxPlayers: 70,
-    difficulty: "Très Difficile",
-    size: "Énorme",
-    biomes: ["Rockwell's Garden", "Innards", "Space"],
-    bosses: ["Rockwell Prime"],
     features: [
-      "Vaisseau spatial",
-      "Striders géants",
-      "Technologie de pointe",
-      "Combat spatial"
+      "Îles interconnectées",
+      "Créatures marines uniques",
+      "Ressources aquatiques rares"
+    ]
+  },
+  {
+    id: "astraeos",
+    name: "Astraeos",
+    description: "Une carte spatiale futuriste avec des technologies avancées.",
+    image: "astraeos.png",
+    status: "online",
+    players: 0,
+    maxPlayers: 70,
+    features: [
+      "Gravité réduite",
+      "Technologies futuristes",
+      "Ressources cosmiques"
+    ]
+  },
+  {
+    id: "insaluna",
+    name: "Insaluna",
+    description: "Une île lunaire mystique avec des créatures nocturnes uniques.",
+    image: "insaluna.png",
+    status: "online",
+    players: 0,
+    maxPlayers: 70,
+    features: [
+      "Cycle jour/nuit unique",
+      "Créatures nocturnes spéciales",
+      "Pouvoir de la lune"
+    ]
+  }
+];
+
+// Carte séparée - pas dans le cluster
+const STANDALONE_MAPS = [
+  {
+    id: "ragnarok_primal_nemesis",
+    name: "Ragnarok Primal Nemesis",
+    description: "Version modifiée de Ragnarok avec des créatures primordiales et des défis uniques. Serveur indépendant.",
+    image: "ragnarok_primal_nemesis.png",
+    status: "online",
+    players: 0,
+    maxPlayers: 70,
+    features: [
+      "Créatures primordiales",
+      "Boss modifiés et renforcés",
+      "Serveur indépendant"
     ],
-    launchCommand: "steam://connect/your-server-ip:7787"
+    special: true,
+    eventType: "Serveur Indépendant",
+    standalone: true
   }
 ];
 
@@ -149,6 +193,11 @@ const MAP_STATUS = {
     color: "#00aaff",
     text: "Redémarrage",
     icon: "🔄"
+  },
+  coming_soon: {
+    color: "#8b5cf6",
+    text: "Bientôt disponible",
+    icon: "🚀"
   }
 };
 
@@ -168,17 +217,20 @@ async function loadMaps() {
 
     // Masquer le loader et afficher le contenu
     if (mapsLoader) mapsLoader.style.display = "none";
-    mapsGrid.style.display = "grid";
+    mapsGrid.style.display = "block";
     mapsGrid.innerHTML = "";
 
     // Charger les données en temps réel depuis l'API
     await loadRealTimeMapData();
     
-    // Créer les cartes
-    ATLANTARK_MAPS.forEach((map, index) => {
-      const mapElement = createMapCard(map, index);
-      mapsGrid.appendChild(mapElement);
-    });
+    // Créer le header avec les statistiques du cluster
+    createClusterHeader(mapsGrid);
+    
+    // Créer la grille des cartes du cluster
+    createClusterMapsGrid(mapsGrid);
+    
+    // Créer la section des serveurs indépendants
+    createStandaloneMapsSection(mapsGrid);
     
     // Mettre à jour les statistiques du cluster
     updateClusterStats();
@@ -191,6 +243,74 @@ async function loadMaps() {
     console.error("Erreur lors du chargement des cartes:", err);
     handleMapsError();
   }
+}
+
+function createClusterHeader(container) {
+  const clusterMaps = ATLANTARK_MAPS.filter(map => !map.standalone);
+  const specialMaps = clusterMaps.filter(map => map.special).length;
+  
+  const statsHeader = document.createElement("div");
+  statsHeader.className = "cluster-stats-header";
+  statsHeader.innerHTML = `
+    <h2 class="cluster-title">🌐 Cluster Atlant'ARK</h2>
+    <p class="cluster-subtitle">Toutes les cartes avec transferts libres entre elles</p>
+    <div class="cluster-stats-grid">
+      <div class="cluster-stat">
+        <div class="stat-number">${clusterMaps.length}</div>
+        <div class="stat-label">Cartes du Cluster</div>
+      </div>
+      <div class="cluster-stat">
+        <div class="stat-number" id="cluster-players">0</div>
+        <div class="stat-label">Joueurs Connectés</div>
+      </div>
+      <div class="cluster-stat special">
+        <div class="stat-number">${specialMaps}</div>
+        <div class="stat-label">Cartes Spéciales</div>
+      </div>
+    </div>
+  `;
+  
+  container.appendChild(statsHeader);
+}
+
+function createClusterMapsGrid(container) {
+  const clusterSection = document.createElement("div");
+  clusterSection.className = "cluster-section";
+  
+  const mapsGrid = document.createElement("div");
+  mapsGrid.className = "maps-grid";
+  
+  ATLANTARK_MAPS.forEach((map, index) => {
+    const mapElement = createMapCard(map, index);
+    mapsGrid.appendChild(mapElement);
+  });
+  
+  clusterSection.appendChild(mapsGrid);
+  container.appendChild(clusterSection);
+}
+
+function createStandaloneMapsSection(container) {
+  if (STANDALONE_MAPS.length === 0) return;
+  
+  const standaloneSection = document.createElement("div");
+  standaloneSection.className = "standalone-section";
+  standaloneSection.innerHTML = `
+    <div class="section-divider">
+      <h2 class="standalone-title">⚡ Serveurs Indépendants</h2>
+      <p class="standalone-subtitle">Serveurs séparés sans transferts avec le cluster principal</p>
+    </div>
+  `;
+  
+  const standaloneMapsGrid = document.createElement("div");
+  standaloneMapsGrid.className = "maps-grid standalone-grid";
+  
+  STANDALONE_MAPS.forEach((map, index) => {
+    const mapElement = createMapCard(map, index + ATLANTARK_MAPS.length);
+    standaloneMapsGrid.appendChild(mapElement);
+  });
+  
+  standaloneSection.appendChild(standaloneMapsGrid);
+  container.appendChild(standaloneSection);
 }
 
 async function loadRealTimeMapData() {
@@ -216,7 +336,7 @@ async function loadRealTimeMapData() {
 
 function createMapCard(map, index) {
   const mapElement = document.createElement("div");
-  mapElement.className = "map-card card";
+  mapElement.className = `map-card card ${map.special ? 'special' : ''} ${map.comingSoon ? 'coming-soon' : ''} ${map.standalone ? 'standalone' : ''}`;
   mapElement.dataset.index = index;
   mapElement.dataset.status = map.status;
   
@@ -236,60 +356,38 @@ function createMapCard(map, index) {
       <div class="map-status-badge" style="background-color: ${statusInfo.color};">
         ${statusInfo.icon} ${statusInfo.text}
       </div>
-      <div class="map-players-badge">
-        👥 ${map.players}/${map.maxPlayers}
-      </div>
+      ${map.status !== 'coming_soon' ? `
+        <div class="map-players-badge">
+          👥 ${map.players}/${map.maxPlayers}
+        </div>
+      ` : ''}
+      ${map.special ? `
+        <div class="special-badge">
+          ⭐ ${map.eventType || 'Spécial'}
+        </div>
+      ` : ''}
+      ${map.comingSoon ? `
+        <div class="coming-soon-ribbon">
+          🚀 Bientôt !
+        </div>
+      ` : ''}
     </div>
     
     <div class="map-content">
       <div class="map-header">
         <h3 class="map-name">${map.name}</h3>
-        <div class="map-difficulty difficulty-${map.difficulty.toLowerCase().replace(' ', '-')}">${map.difficulty}</div>
       </div>
       
       <p class="map-description">${map.description}</p>
       
-      <div class="map-details">
-        <div class="map-detail">
-          <span class="detail-icon">📏</span>
-          <span>Taille: ${map.size}</span>
-        </div>
-        <div class="map-detail">
-          <span class="detail-icon">🌍</span>
-          <span>${map.biomes.length} biomes</span>
-        </div>
-        <div class="map-detail">
-          <span class="detail-icon">👹</span>
-          <span>${map.bosses.length} boss${map.bosses.length > 1 ? 'es' : ''}</span>
-        </div>
-      </div>
-      
       <div class="map-features">
         <h4>Caractéristiques :</h4>
         <ul>
-          ${map.features.slice(0, 3).map(feature => `<li>${feature}</li>`).join('')}
+          ${map.features.map(feature => `<li>${feature}</li>`).join('')}
         </ul>
       </div>
       
-      <div class="map-actions">
-        ${map.status === 'online' ? `
-          <button class="btn-primary map-join-btn" onclick="joinMap('${map.id}', '${map.launchCommand}')">
-            🚀 Rejoindre
-          </button>
-          <button class="btn-secondary map-info-btn" onclick="showMapDetails('${map.id}')">
-            ℹ️ Détails
-          </button>
-        ` : `
-          <button class="btn-secondary map-join-btn disabled" disabled>
-            ${statusInfo.icon} ${statusInfo.text}
-          </button>
-          <button class="btn-secondary map-info-btn" onclick="showMapDetails('${map.id}')">
-            ℹ️ Détails
-          </button>
-        `}
-      </div>
-      
-      ${map.players > 0 ? `
+      ${map.players > 0 && map.status !== 'coming_soon' ? `
         <div class="player-activity">
           <div class="activity-bar">
             <div class="activity-fill" style="width: ${playerPercentage}%;"></div>
