@@ -248,6 +248,7 @@ async function loadMaps() {
 function createClusterHeader(container) {
   const clusterMaps = ATLANTARK_MAPS.filter(map => !map.standalone);
   const specialMaps = clusterMaps.filter(map => map.special).length;
+  const onlineMaps = clusterMaps.filter(map => map.status === 'online').length;
   
   const statsHeader = document.createElement("div");
   statsHeader.className = "cluster-stats-header";
@@ -260,8 +261,8 @@ function createClusterHeader(container) {
         <div class="stat-label">Cartes du Cluster</div>
       </div>
       <div class="cluster-stat">
-        <div class="stat-number" id="cluster-players">0</div>
-        <div class="stat-label">Joueurs Connectés</div>
+        <div class="stat-number">${onlineMaps}</div>
+        <div class="stat-label">Cartes En Ligne</div>
       </div>
       <div class="cluster-stat special">
         <div class="stat-number">${specialMaps}</div>
@@ -314,24 +315,47 @@ function createStandaloneMapsSection(container) {
 }
 
 async function loadRealTimeMapData() {
+  // API DÉSACTIVÉE - En attente de configuration
+  // Aucune simulation de joueurs pour éviter la confusion
+  console.log("Mode développement - API désactivée, aucune donnée de joueurs affichée");
+  
+  /* 
+  TODO: QUAND L'API SERA PRÊTE, REMPLACER PAR :
+  
   try {
-    // Appel API pour récupérer les données en temps réel
     const response = await fetch(`${API_URL}/maps/status`);
     if (response.ok) {
       const data = await response.json();
       
-      // Mettre à jour les données des cartes
+      // Structure attendue de l'API :
+      // {
+      //   "maps": [
+      //     {
+      //       "id": "the_island",
+      //       "status": "online",
+      //       "players": 12,
+      //       "maxPlayers": 70
+      //     },
+      //     ...
+      //   ]
+      // }
+      
       data.maps?.forEach(apiMap => {
-        const map = ATLANTARK_MAPS.find(m => m.id === apiMap.id);
+        const allMaps = [...ATLANTARK_MAPS, ...STANDALONE_MAPS];
+        const map = allMaps.find(m => m.id === apiMap.id);
         if (map) {
           map.players = apiMap.players || 0;
           map.status = apiMap.status || 'online';
+          map.maxPlayers = apiMap.maxPlayers || 70;
         }
       });
+      
+      console.log("Données des cartes mises à jour depuis l'API");
     }
   } catch (error) {
-    console.log("Mode hors ligne - utilisation des données statiques");
+    console.log("Erreur API - utilisation des statuts par défaut");
   }
+  */
 }
 
 function createMapCard(map, index) {
@@ -341,7 +365,6 @@ function createMapCard(map, index) {
   mapElement.dataset.status = map.status;
   
   const statusInfo = MAP_STATUS[map.status] || MAP_STATUS.online;
-  const playerPercentage = Math.round((map.players / map.maxPlayers) * 100);
   
   mapElement.innerHTML = `
     <div class="map-image-container">
@@ -356,11 +379,6 @@ function createMapCard(map, index) {
       <div class="map-status-badge" style="background-color: ${statusInfo.color};">
         ${statusInfo.icon} ${statusInfo.text}
       </div>
-      ${map.status !== 'coming_soon' ? `
-        <div class="map-players-badge">
-          👥 ${map.players}/${map.maxPlayers}
-        </div>
-      ` : ''}
       ${map.special ? `
         <div class="special-badge">
           ⭐ ${map.eventType || 'Spécial'}
@@ -386,15 +404,6 @@ function createMapCard(map, index) {
           ${map.features.map(feature => `<li>${feature}</li>`).join('')}
         </ul>
       </div>
-      
-      ${map.players > 0 && map.status !== 'coming_soon' ? `
-        <div class="player-activity">
-          <div class="activity-bar">
-            <div class="activity-fill" style="width: ${playerPercentage}%;"></div>
-          </div>
-          <span class="activity-text">${playerPercentage}% de capacité</span>
-        </div>
-      ` : ''}
     </div>
   `;
   
@@ -492,19 +501,8 @@ function closeMapModal() {
 // ===========================
 
 function updateClusterStats() {
-  const totalPlayers = ATLANTARK_MAPS.reduce((sum, map) => sum + map.players, 0);
-  const onlineMaps = ATLANTARK_MAPS.filter(map => map.status === 'online').length;
-  
-  const totalMapsElement = document.getElementById('total-maps');
-  const clusterPlayersElement = document.getElementById('cluster-players');
-  
-  if (totalMapsElement) {
-    totalMapsElement.textContent = onlineMaps;
-  }
-  
-  if (clusterPlayersElement) {
-    clusterPlayersElement.textContent = totalPlayers;
-  }
+  // Plus de stats de joueurs à mettre à jour
+  console.log("Mode développement - statistiques statiques affichées");
 }
 
 // ===========================
