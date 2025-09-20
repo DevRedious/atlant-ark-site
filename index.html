@@ -11,99 +11,91 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Navigation fixe -->
+  <!-- Navigation horizontale -->
   <nav class="navbar">
     <div class="nav-container">
-      <div class="nav-brand">
-        <img src="assets/images/logo_atlant_ark.ico" alt="Atlant'ARK" class="nav-logo">
-        <span class="brand-text">Atlant'ARK</span>
-      </div>
+      <a href="#" class="nav-brand">
+        <img src="assets/images/logo_atlant_ark.ico" alt="Atlant'ARK">
+        <span>Atlant'ARK</span>
+      </a>
       
-      <div class="nav-menu" id="nav-menu">
-        <a href="#hero" class="nav-link">Accueil</a>
-        <a href="#stats" class="nav-link">Statistiques</a>
-        <a href="#mods" class="nav-link">Mods</a>
-        <a href="#discord" class="nav-link">Discord</a>
-        <a href="#support" class="nav-link">Soutenir</a>
-      </div>
+      <ul class="nav-menu">
+        <li><a href="#hero" class="nav-link active">Accueil</a></li>
+        <li><a href="#stats" class="nav-link">Serveur</a></li>
+        <li><a href="#mods" class="nav-link">Mods</a></li>
+        <li><a href="#discord" class="nav-link">Discord</a></li>
+        <li><a href="#support" class="nav-link">Support</a></li>
+      </ul>
 
       <div class="nav-auth">
+        <div class="stats-badge">
+          <div class="online-dot"></div>
+          <span id="quick-players">0</span> en ligne
+        </div>
+        
         <!-- Bouton de connexion -->
         <button class="discord-login-btn" id="login-btn" onclick="loginWithDiscord()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
           </svg>
           Se connecter
         </button>
 
         <!-- Profil utilisateur -->
-        <div class="user-profile" id="user-profile" style="display:none;">
-          <div class="user-dropdown">
-            <div class="user-display" onclick="toggleUserMenu()">
-              <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
-              <div class="user-info">
-                <span class="user-name" id="user-name">Chargement...</span>
-                <span class="user-balance" id="user-balance">
-                  <img src="assets/images/aqualis.png" class="currency-icon" alt="Aqualis"> 0 Aqualis
-                </span>
+        <div class="user-profile" id="user-profile">
+          <div class="user-display" onclick="toggleUserMenu()">
+            <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+            <div>
+              <div class="user-name" id="user-name">Chargement...</div>
+              <div class="user-balance" id="user-balance">
+                <img src="assets/images/aqualis.png" class="currency-icon" alt="Aqualis"> 0
               </div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="dropdown-arrow">
-                <path d="M7 10l5 5 5-5z"/>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </div>
+          <div class="dropdown-menu" id="user-menu">
+            <a href="#" class="dropdown-item" onclick="showProfile()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
               </svg>
-            </div>
-            <div class="dropdown-menu" id="user-menu">
-              <a href="#" class="dropdown-item" onclick="showProfile()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-                Mon Profil
-              </a>
-              <a href="#" class="dropdown-item" onclick="showHistory()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19V1h-2v1H7V1H5v1H4.5C3.11 2 2 3.11 2 4.5v15C2 20.89 3.11 22 4.5 22h15c1.39 0 2.5-1.11 2.5-2.5v-15C22 3.11 20.89 2 19.5 2z"/>
-                </svg>
-                Historique
-              </a>
-              <a href="#" class="dropdown-item" onclick="showSettings()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
-                </svg>
-                Paramètres
-              </a>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item logout" onclick="logout()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
-                </svg>
-                Déconnexion
-              </a>
-            </div>
+              Mon Profil
+            </a>
+            <a href="#" class="dropdown-item" onclick="showHistory()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19V1h-2v1H7V1H5v1H4.5C3.11 2 2 3.11 2 4.5v15C2 20.89 3.11 22 4.5 22h15c1.39 0 2.5-1.11 2.5-2.5v-15C22 3.11 20.89 2 19.5 2z"/>
+              </svg>
+              Historique
+            </a>
+            <a href="#" class="dropdown-item logout" onclick="logout()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+              </svg>
+              Déconnexion
+            </a>
           </div>
         </div>
-      </div>
 
-      <div class="nav-toggle" id="nav-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
+        <div class="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section Premium -->
+  <!-- Hero Section -->
   <section id="hero" class="hero">
-    <div class="hero-background">
-      <img src="assets/images/atlantark-banner.png" alt="Atlant'ARK" class="hero-image">
-      <div class="hero-overlay"></div>
-    </div>
     <div class="hero-content">
       <div class="hero-badge">Serveur ARK ASA FR</div>
-      <h1 class="hero-title">Bienvenue sur <span class="gradient-text">Atlant'ARK</span></h1>
+      <h1 class="hero-title">Bienvenue sur <span class="neon-text">Atlant'ARK</span></h1>
       <p class="hero-subtitle">Rejoignez la meilleure communauté ARK avec des fonctionnalités exclusives, une stabilité garantie et une expérience de jeu exceptionnelle.</p>
       <div class="hero-actions">
-        <a href="#stats" class="btn-primary">Voir les Stats</a>
+        <a href="#stats" class="btn-primary">Découvrir le Serveur</a>
         <a href="https://discord.gg/8GBpJqb84A" target="_blank" class="btn-secondary">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
           </svg>
           Rejoindre Discord
@@ -112,672 +104,125 @@
     </div>
   </section>
 
-  <!-- Statistiques du serveur -->
+  <!-- Section Statistiques -->
   <section id="stats" class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Statistiques du Serveur</h2>
-        <p class="section-subtitle">Données en temps réel de notre serveur Atlant'ARK</p>
-      </div>
-
-      <div id="stats-loader" class="loader-modern"></div>
-      <div class="stats-grid" id="stats-content" style="display:none;">
-        <div class="stat-card primary">
-          <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-number" id="player-count">-</span>
-            <span class="stat-label">Joueurs en ligne</span>
-          </div>
-          <div class="stat-status online"></div>
+    <h2 class="section-title">Statistiques du Serveur</h2>
+    <p class="section-subtitle">Données en temps réel de notre serveur Atlant'ARK</p>
+    
+    <div id="stats-loader" class="loader"></div>
+    <div class="stats-grid" id="stats-content" style="display:none;">
+      <div class="card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
         </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
-            </svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-number" id="uptime">-</span>
-            <span class="stat-label">Temps de fonctionnement</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
-            </svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-number" id="auctions">-</span>
-            <span class="stat-label">Enchères actives</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16,4C18.11,4 20.11,4.89 21.39,6.39L22.5,5.5C22.92,5.14 23.5,5.46 23.5,6V10.5C23.5,10.78 23.28,11 23,11H18.5C18.04,11 17.72,10.42 18.08,10L19.31,8.69C18.54,7.95 17.56,7.5 16.5,7.5C14.69,7.5 13.19,8.96 13.19,10.75C13.19,12.54 14.69,14 16.5,14C17.24,14 17.92,13.78 18.5,13.36L20.13,15.36C19.18,16.04 18.11,16.5 17,16.5C13.42,16.5 10.5,13.58 10.5,10S13.42,3.5 17,3.5H16Z"/>
-            </svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-number" id="registered-players">-</span>
-            <span class="stat-label">Joueurs enregistrés</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Dashboard utilisateur -->
-  <section id="user-dashboard" class="section auth-required" style="display:none;">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Mon Dashboard Personnel</h2>
-        <p class="section-subtitle">Vos statistiques et informations de compte</p>
+        <div class="card-number" id="player-count">-</div>
+        <div class="card-label">Joueurs en ligne</div>
       </div>
       
-      <div class="dashboard-grid">
-        <div class="dashboard-card balance">
-          <div class="card-header">
-            <h3>Mon Solde</h3>
-            <img src="assets/images/aqualis.png" class="currency-icon large" alt="Aqualis">
-          </div>
-          <div class="card-content">
-            <span class="balance-amount" id="my-balance">0</span>
-            <span class="balance-label">Aqualis</span>
-          </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+          </svg>
         </div>
-
-        <div class="dashboard-card">
-          <div class="card-header">
-            <h3>Enchères Gagnées</h3>
-            <div class="card-icon trophy">🏆</div>
-          </div>
-          <div class="card-content">
-            <span class="card-number" id="my-wins">0</span>
-          </div>
+        <div class="card-number" id="uptime">-</div>
+        <div class="card-label">Temps de fonctionnement</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+          </svg>
         </div>
-
-        <div class="dashboard-card">
-          <div class="card-header">
-            <h3>Mon Classement</h3>
-            <div class="card-icon rank">📊</div>
-          </div>
-          <div class="card-content">
-            <span class="card-number" id="my-rank">#-</span>
-          </div>
+        <div class="card-number" id="auctions">-</div>
+        <div class="card-label">Enchères actives</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16,4C18.11,4 20.11,4.89 21.39,6.39L22.5,5.5C22.92,5.14 23.5,5.46 23.5,6V10.5C23.5,10.78 23.28,11 23,11H18.5C18.04,11 17.72,10.42 18.08,10L19.31,8.69C18.54,7.95 17.56,7.5 16.5,7.5C14.69,7.5 13.19,8.96 13.19,10.75C13.19,12.54 14.69,14 16.5,14C17.24,14 17.92,13.78 18.5,13.36L20.13,15.36C19.18,16.04 18.11,16.5 17,16.5C13.42,16.5 10.5,13.58 10.5,10S13.42,3.5 17,3.5H16Z"/>
+          </svg>
         </div>
-
-        <div class="dashboard-card">
-          <div class="card-header">
-            <h3>Participations</h3>
-            <div class="card-icon participation">🎯</div>
-          </div>
-          <div class="card-content">
-            <span class="card-number" id="my-auctions">0</span>
-          </div>
-        </div>
+        <div class="card-number" id="registered-players">-</div>
+        <div class="card-label">Joueurs enregistrés</div>
       </div>
     </div>
   </section>
 
   <!-- Section Mods -->
   <section id="mods" class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Mods Installés</h2>
-        <p class="section-subtitle">Collection complète de mods pour une expérience de jeu unique</p>
-      </div>
-
-      <div id="mods-loader" class="loader-modern"></div>
-      <div id="mods-list" style="display:none;"></div>
-    </div>
+    <h2 class="section-title">Mods Installés</h2>
+    <p class="section-subtitle">Collection complète de mods pour une expérience de jeu unique</p>
+    
+    <div id="mods-loader" class="loader"></div>
+    <div id="mods-list" style="display:none;"></div>
   </section>
 
-  <!-- Discord Community -->
-  <section id="discord" class="section community">
-    <div class="container">
-      <div class="community-content">
-        <div class="community-text">
-          <h2 class="section-title">Rejoignez la Communauté</h2>
-          <p class="section-subtitle">Rejoignez une communauté conviviale, participez à nos événements et profitez d’une expérience ARK sans prise de tête !</p>
-          <div class="community-features">
-            <div class="feature">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <span>Événements réguliers</span>
-            </div>
-            <div class="feature">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <span>Support technique</span>
-            </div>
-            <div class="feature">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <span>Communauté active</span>
-            </div>
-          </div>
-          <a href="https://discord.gg/8GBpJqb84A" target="_blank" class="btn-discord">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
-            </svg>
-            Rejoindre Discord
-          </a>
+  <!-- Section Discord -->
+  <section id="discord" class="section">
+    <h2 class="section-title">Communauté Discord</h2>
+    <p class="section-subtitle">Rejoignez une communauté conviviale et active</p>
+    
+    <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+      <div class="card" style="padding: 3rem;">
+        <div style="margin-bottom: 2rem;">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="var(--neon-green)" style="margin: 0 auto; display: block;">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
         </div>
-        <div class="community-visual">
-          <div class="discord-preview">
-            <div class="discord-header">
-              <div class="discord-logo">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="#5865f2">
-                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
-                </svg>
-              </div>
-              <span class="server-name">Atlant'ARK Communauté</span>
-              <div class="online-count">🟢 Bientôt disponible.</div>
-            </div>
-          </div>
-        </div>
+        <h3 style="color: var(--neon-green); margin-bottom: 1rem; font-size: 1.5rem;">Atlant'ARK Communauté</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+          Événements réguliers, support technique et communauté active vous attendent sur notre serveur Discord.
+        </p>
+        <a href="https://discord.gg/8GBpJqb84A" target="_blank" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
+          Rejoindre Discord
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- Support Section -->
-  <section id="support" class="section support">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Soutenir le Serveur</h2>
-        <p class="section-subtitle">Aidez-nous à maintenir et améliorer l'expérience de jeu pour toute la communauté</p>
+  <!-- Section Support -->
+  <section id="support" class="section">
+    <h2 class="section-title">Soutenir le Serveur</h2>
+    <p class="section-subtitle">Aidez-nous à maintenir et améliorer l'expérience de jeu</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+      <div class="card" style="text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">💰</div>
+        <h3 style="color: var(--neon-green); margin-bottom: 1rem;">Donations</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+          Soutenez directement le serveur pour couvrir les frais d'hébergement et de développement
+        </p>
+        <a href="https://www.paypal.me/RoxaneRubis" target="_blank" class="btn-primary">
+          Faire un don PayPal
+        </a>
       </div>
       
-      <div class="support-grid">
-        <div class="support-card">
-          <div class="support-icon">💰</div>
-          <h3>Donations</h3>
-          <p>Soutenez directement le serveur pour couvrir les frais d'hébergement et de développement</p>
-          <a href="https://www.paypal.me/RoxaneRubis" target="_blank" class="btn-paypal">
-            <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal">
-            Faire un don
-          </a>
-        </div>
-        
-        <div class="support-card">
-          <div class="support-icon">⭐</div>
-          <h3>Premium</h3>
-          <p>Accédez à des fonctionnalités exclusives</p>
-          <div class="premium-coming">
-            <span class="coming-soon">Bientôt disponible</span>
-          </div>
-        </div>
-        
-        <div class="support-card">
-          <div class="support-icon">🎮</div>
-          <h3>Partager</h3>
-          <p>Invitez vos amis et aidez la communauté à grandir</p>
-          <div class="share-buttons">
-            <button class="share-btn" onclick="shareServer()">Partager</button>
-          </div>
-        </div>
+      <div class="card" style="text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
+        <h3 style="color: var(--neon-green); margin-bottom: 1rem;">Partager</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+          Invitez vos amis et aidez la communauté à grandir
+        </p>
+        <button class="btn-secondary" onclick="shareServer()">
+          Partager le serveur
+        </button>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <img src="assets/images/logo_atlant_ark.ico" alt="Atlant'ARK" class="footer-logo">
-          <div>
-            <h3>Atlant'ARK</h3>
-            <p>Serveur ARK ASA FR</p>
-          </div>
-        </div>
-        <div class="footer-links">
-          <div class="link-group">
-            <h4>Navigation</h4>
-            <a href="#hero">Accueil</a>
-            <a href="#stats">Statistiques</a>
-            <a href="#mods">Mods</a>
-            <a href="#discord">Discord</a>
-          </div>
-          <div class="link-group">
-            <h4>Communauté</h4>
-            <a href="https://discord.gg/8GBpJqb84A" target="_blank">Discord</a>
-            <a href="#" onclick="shareServer()">Partager</a>
-            <a href="#support">Soutenir</a>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 Atlant'ARK. Serveur communautaire ARK Survival Ascended.</p>
-      </div>
-    </div>
+    <p>&copy; 2025 Atlant'ARK. Serveur communautaire ARK Survival Ascended.</p>
   </footer>
 
-  <!-- JavaScript -->
-  <script>
-    const API_URL = "https://atlantark-token.up.railway.app";
-    let currentUser = null;
-
-    // Base de données des mods
-    const ATLANTARK_MODS = [
-      {
-        id: 933099,
-        name: "Super Cryo Storage",
-        emoji: "🧊",
-        description: "Stockage de vos créatures en cryopods, sans timer ni restrictions.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/super-cryo-storage",
-        icon: "super-cryo-storage.png"
-      },
-      {
-        id: 1007416,
-        name: "Amissa Additions",
-        emoji: "⭐",
-        description: "Permet le transfert complet des dinosaures depuis la carte Amissa vers vos autres maps.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/amissa-additions",
-        icon: "amissa-additions.png"
-      },
-      {
-        id: 976409,
-        name: "Amissa Structures",
-        emoji: "🏗️",
-        description: "Ajoute les structures de la carte Amissa.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/amissa-structures",
-        icon: "amissa-structures.png"
-      },
-      {
-        id: 912815,
-        name: "S+ Dino Variants",
-        emoji: "🐉",
-        description: "Variants colorés et améliorés des dinosaures classiques.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/s-dino-variants",
-        icon: "s-dino-variants.png"
-      },
-      {
-        id: 1177331,
-        name: "S+ Dino Variants: Fantastic Tames",
-        emoji: "✨",
-        description: "Variants colorés et améliorés des dinosaures fantastiques.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/s-dino-variants-fantastic-tames",
-        icon: "s-dino-variants-fantastic-tame.png"
-      },
-      {
-        id: 959521,
-        name: "Breeding Stopper",
-        emoji: "🛑",
-        description: "Arrête automatiquement les reproductions quand vous vous déconnectez du serveur ou changez de maps.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/breeding-stopper",
-        icon: "breeding-stopper.png"
-      },
-      {
-        id: 942339,
-        name: "JVH Pickup Tool",
-        emoji: "🔧",
-        description: "Outil de ramassage avancé pour vos structures.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/jvh-pickup-tool",
-        icon: "jvh-pickup-tool.png"
-      },
-      {
-        id: 944162,
-        name: "Shoko Decoration",
-        emoji: "🎨",
-        description: "Ajoute de nombreux éléments décoratifs et mobiliers pour personnaliser vos bases.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/shoko-decoration",
-        icon: "shoko-decoration.png"
-      },
-      {
-        id: 933447,
-        name: "Alfa Oceanic Platforms",
-        emoji: "🌊",
-        description: "Plateformes océaniques pour construire sur l'eau.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/alfaoceanicplataforms",
-        icon: "alfa-oceanic-platforms.png"
-      },
-      {
-        id: 1019389,
-        name: "Net Pro",
-        emoji: "🕸️",
-        description: "Permet de capturer les créatures pour faciliter l’apprivoisement.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/net-pro",
-        icon: "net-pro.png"
-      },
-      {
-        id: 950265,
-        name: "Euthanasia Gun",
-        emoji: "💊",
-        description: "Permet de tuer vos dinos.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/euthanasia-gun",
-        icon: "euthanasia-gun.png"
-      },
-      {
-        id: 929420,
-        name: "Super Spyglass Plus",
-        emoji: "🔍",
-        description: "Longue-vue améliorée avec informations détaillées sur les créatures.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/super-spyglass-plus",
-        icon: "super-spyglass-plus.png"
-      },
-      {
-        id: 1265191,
-        name: "Server Mod Atlantark",
-        emoji: "🌋",
-        description: "Mod serveur exclusif Atlant-Ark.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/server-mod-atlantark",
-        icon: "server-mod-atlantark.png",
-        special: true
-      },
-      {
-        id: 929868,
-        name: "Admin Panel",
-        emoji: "⚙️",
-        description: "Panneau d'administration avancé pour la gestion serveur.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/admin-panel",
-        icon: "admin-panel.png"
-      },
-      {
-        id: 928708,
-        name: "Custom Dino Levels",
-        emoji: "📈",
-        description: "Permet de générer des dinosaures de niveaux plus élevés.",
-        url: "https://www.curseforge.com/ark-survival-ascended/mods/custom-dino-levels",
-        icon: "custom-dino-levels.png"
-      }
-    ];
-
-    // Fonctions d'authentification
-    window.addEventListener('load', async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      const error = urlParams.get('error');
-
-      if (error) {
-        console.error('Erreur auth:', error);
-        showNotification('Erreur de connexion: ' + error, 'error');
-        return;
-      }
-
-      if (token) {
-        localStorage.setItem('auth_token', token);
-        window.history.replaceState({}, document.title, window.location.origin + window.location.pathname);
-        showNotification('Connexion réussie !', 'success');
-      }
-
-      const savedToken = localStorage.getItem('auth_token');
-      if (savedToken) {
-        await verifyAndLoadUser(savedToken);
-      }
-
-      loadStats();
-      loadMods();
-      initializeNavigation();
-    });
-
-    async function verifyAndLoadUser(token) {
-      try {
-        const response = await fetch(`${API_URL}/auth/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.valid) {
-            currentUser = data.user;
-            showUserInterface();
-            await loadUserProfile();
-          }
-        } else {
-          localStorage.removeItem('auth_token');
-        }
-      } catch (err) {
-        console.error('Erreur vérification token:', err);
-        localStorage.removeItem('auth_token');
-      }
-    }
-
-    function loginWithDiscord() {
-      window.location.href = `${API_URL}/auth/discord`;
-    }
-
-    function showUserInterface() {
-      document.getElementById('login-btn').style.display = 'none';
-      document.getElementById('user-profile').style.display = 'block';
-      
-      const dashboard = document.getElementById('user-dashboard');
-      dashboard.style.display = 'block';
-      dashboard.classList.remove('auth-required');
-    }
-
-    async function loadUserProfile() {
-      try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(`${API_URL}/user/profile`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (response.ok) {
-          const profile = await response.json();
-          
-          document.getElementById('user-name').textContent = profile.username;
-          document.getElementById('user-balance').innerHTML = `<img src="assets/images/aqualis.png" class="currency-icon" alt="Aqualis"> ${profile.balance} Aqualis`;
-          
-          if (profile.avatar_url) {
-            document.getElementById('user-avatar').src = profile.avatar_url;
-            document.getElementById('user-avatar').style.display = 'block';
-          }
-
-          document.getElementById('my-balance').textContent = profile.balance.toLocaleString();
-          document.getElementById('my-wins').textContent = profile.auction_wins;
-          document.getElementById('my-rank').textContent = profile.rank;
-          document.getElementById('my-auctions').textContent = profile.total_auctions;
-        }
-      } catch (err) {
-        console.error('Erreur profil:', err);
-      }
-    }
-
-    async function loadStats() {
-      try {
-        const res = await fetch(`${API_URL}/stats`);
-        const data = await res.json();
-
-        document.getElementById("stats-loader").style.display = "none";
-        document.getElementById("stats-content").style.display = "grid";
-
-        document.getElementById("player-count").innerText = data.players_online;
-        document.getElementById("uptime").innerText = data.uptime;
-        document.getElementById("auctions").innerText = data.active_auctions;
-        document.getElementById("registered-players").innerText = data.registered_players;
-      } catch (err) {
-        console.error("Erreur stats:", err);
-        document.getElementById("stats-loader").style.display = "none";
-        document.getElementById("stats-content").innerHTML = '<p class="error-message">⚠️ Impossible de charger les statistiques</p>';
-        document.getElementById("stats-content").style.display = "block";
-      }
-    }
-
-    async function loadMods() {
-      try {
-        document.getElementById("mods-loader").style.display = "none";
-        const container = document.getElementById("mods-list");
-        container.style.display = "block";
-        container.innerHTML = "";
-
-        // Header avec statistiques
-        const statsHeader = document.createElement("div");
-        statsHeader.className = "mods-stats";
-        statsHeader.innerHTML = `
-          <div class="mods-stats-grid">
-            <div class="mod-stat">
-              <span class="stat-number">${ATLANTARK_MODS.length}</span>
-              <span class="stat-label">Mods Installés</span>
-            </div>
-            <div class="mod-stat special">
-              <span class="stat-number">1</span>
-              <span class="stat-label">Mod Exclusif</span>
-            </div>
-          </div>
-        `;
-        container.appendChild(statsHeader);
-
-        // Grid des mods
-        const modsGrid = document.createElement("div");
-        modsGrid.className = "mods-grid";
-        
-        ATLANTARK_MODS.forEach(mod => {
-          const modElement = document.createElement("div");
-          modElement.className = `mod-card ${mod.special ? 'special' : ''}`;
-          
-          modElement.innerHTML = `
-            <div class="mod-header">
-              <div class="mod-icon-container">
-                <img src="assets/images/mod-icons/${mod.icon}" 
-                     alt="${mod.name}" 
-                     class="mod-icon" 
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <span class="mod-emoji" style="display:none;">${mod.emoji}</span>
-              </div>
-              <div class="mod-info">
-                <h3 class="mod-name">${mod.name}</h3>
-                <span class="mod-id">ID: ${mod.id}</span>
-              </div>
-              ${mod.special ? '<div class="exclusive-badge">🌋 Exclusif</div>' : ''}
-            </div>
-            <p class="mod-description">${mod.description}</p>
-            <a href="${mod.url}" target="_blank" class="mod-link">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
-              </svg>
-              Voir sur CurseForge
-            </a>
-          `;
-          
-          modsGrid.appendChild(modElement);
-        });
-        
-        container.appendChild(modsGrid);
-
-      } catch (err) {
-        console.error("Erreur mods:", err);
-        document.getElementById("mods-loader").style.display = "none";
-        document.getElementById("mods-list").innerHTML = '<p class="error-message">⚠️ Impossible de charger la liste des mods</p>';
-        document.getElementById("mods-list").style.display = "block";
-      }
-    }
-
-    // Fonctions utilitaires
-    function toggleUserMenu() {
-      const menu = document.getElementById('user-menu');
-      menu.classList.toggle('active');
-    }
-
-    function logout() {
-      localStorage.removeItem('auth_token');
-      currentUser = null;
-      
-      document.getElementById('login-btn').style.display = 'flex';
-      document.getElementById('user-profile').style.display = 'none';
-      
-      const dashboard = document.getElementById('user-dashboard');
-      dashboard.style.display = 'none';
-      dashboard.classList.add('auth-required');
-      
-      showNotification('Déconnecté avec succès', 'success');
-    }
-
-    function showProfile() {
-      showNotification('Page profil - En développement', 'info');
-    }
-
-    function showHistory() {
-      showNotification('Historique des enchères - En développement', 'info');
-    }
-
-    function showSettings() {
-      showNotification('Paramètres - En développement', 'info');
-    }
-
-    function shareServer() {
-      if (navigator.share) {
-        navigator.share({
-          title: "Atlant'ARK - Serveur ARK ASA FR",
-          text: 'Rejoignez le meilleur serveur ARK communautaire !',
-          url: window.location.href
-        });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        showNotification('Lien copié dans le presse-papiers !', 'success');
-      }
-    }
-
-    function showNotification(message, type = 'info') {
-      const notification = document.createElement('div');
-      notification.className = `notification ${type}`;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-      
-      setTimeout(() => notification.classList.add('show'), 10);
-      setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => document.body.removeChild(notification), 300);
-      }, 3000);
-    }
-
-    function initializeNavigation() {
-      // Smooth scroll
-      document.querySelectorAll('a[href^="#"]').forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        });
-      });
-
-      // Mobile menu toggle
-      const navToggle = document.getElementById('nav-toggle');
-      const navMenu = document.getElementById('nav-menu');
-      
-      if (navToggle) {
-        navToggle.addEventListener('click', () => {
-          navMenu.classList.toggle('active');
-          navToggle.classList.toggle('active');
-        });
-      }
-
-      // Close mobile menu on link click
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-          navMenu.classList.remove('active');
-          navToggle.classList.remove('active');
-        });
-      });
-    }
-
-    // Auto-refresh
-    setInterval(loadStats, 30000);
-    setInterval(() => {
-      if (currentUser) loadUserProfile();
-    }, 120000);
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.user-dropdown')) {
-        document.getElementById('user-menu').classList.remove('active');
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
