@@ -1,7 +1,6 @@
 /* ===========================================
    ATLANT-ARK CSS COMPLET - VERSION FINALE
-   Thème vert néon gaming - OPTIMISÉ pour images 600x600px
-   Basé sur votre CSS original avec améliorations
+   Thème vert néon gaming avec toutes les pages
    =========================================== */
 
 /* Variables CSS - Thème vert néon */
@@ -296,8 +295,7 @@ body::before {
   z-index: 1001;
 }
 
-.dropdown-menu.show,
-.dropdown-menu.active {
+.dropdown-menu.show {
   display: block;
 }
 
@@ -505,10 +503,6 @@ body::before {
   min-height: 100vh;
   max-width: 1400px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
 }
 
 .container {
@@ -739,6 +733,7 @@ body::before {
 }
 
 .benefit-item,
+.feature-item,
 .share-benefit {
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
@@ -812,20 +807,6 @@ body::before {
   font-weight: bold;
 }
 
-.info-card.large {
-  background: rgba(0, 255, 65, 0.05);
-  border: 1px solid rgba(0, 255, 65, 0.2);
-  border-radius: var(--border-radius);
-  padding: 2rem;
-}
-
-.info-card.large h3 {
-  color: var(--neon-green);
-  margin-bottom: 1.5rem;
-  font-size: 1.3rem;
-  text-align: center;
-}
-
 /* ===========================================
    PAGE SERVEUR
    =========================================== */
@@ -835,7 +816,6 @@ body::before {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
   margin-bottom: 3rem;
-  width: 100%;
 }
 
 .card {
@@ -846,10 +826,6 @@ body::before {
   transition: var(--transition);
   position: relative;
   overflow: hidden;
-  height: auto;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
 }
 
 .card::before {
@@ -876,23 +852,6 @@ body::before {
 .card-icon {
   color: var(--neon-green);
   margin-bottom: 1rem;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.card-icon.trophy,
-.card-icon.rank,
-.card-icon.participation {
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
 }
 
 .card-number {
@@ -916,7 +875,6 @@ body::before {
 
 .section-header {
   margin-bottom: 2rem;
-  text-align: center;
 }
 
 .section-title {
@@ -936,7 +894,6 @@ body::before {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
-  width: 100%;
 }
 
 .balance-card {
@@ -981,16 +938,6 @@ body::before {
   height: 24px;
 }
 
-#user-dashboard {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-#user-dashboard.dashboard-section {
-  margin-bottom: 3rem;
-}
-
 /* ===========================================
    PAGE MODS
    =========================================== */
@@ -1017,42 +964,10 @@ body::before {
   100% { transform: rotate(360deg); }
 }
 
-#stats-loader,
-#mods-loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-}
-
-#stats-loader::after,
-#mods-loader::after {
-  content: '';
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border-color);
-  border-top: 3px solid var(--neon-green);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
 .mods-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
-}
-
-.mods-stats-header {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  margin-bottom: 3rem;
-  flex-wrap: wrap;
-}
-
-.mods-stats-header .card.special {
-  border-color: var(--neon-green);
-  background: rgba(0, 255, 65, 0.05);
 }
 
 .mod-card {
@@ -1083,6 +998,453 @@ body::before {
 
 .mod-content {
   padding: 1.5rem;
+}
+
+.mod-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.mod-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.mod-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-official {
+  background: rgba(0, 255, 65, 0.2);
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+}
+
+.badge-exclusive {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8b5cf6;
+  border: 1px solid #8b5cf6;
+}
+
+.mod-description {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+
+/* ===========================================
+   UTILITAIRES ET HELPERS
+   =========================================== */
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.hidden { display: none !important; }
+.visible { display: block !important; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+.p-3 { padding: 1.5rem; }
+.p-4 { padding: 2rem; }
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================================
+   RESPONSIVE DESIGN
+   =========================================== */
+
+@media (max-width: 1024px) {
+  .nav-container {
+    padding: 1rem 1.5rem;
+  }
+  
+  .hero {
+    padding: 1.5rem;
+  }
+  
+  .page-content {
+    padding: 5rem 1.5rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none;
+  }
+  
+  .mobile-menu {
+    display: flex;
+  }
+  
+  .nav-container {
+    padding: 1rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .page-content {
+    padding: 5rem 1rem 1rem;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .discord-main-card {
+    padding: 2rem;
+  }
+  
+  .discord-features {
+    grid-template-columns: 1fr;
+  }
+  
+  .discord-stats {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .support-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .support-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mods-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-brand span {
+    font-size: 1.2rem;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.8rem;
+  }
+  
+  .discord-main-card h2 {
+    font-size: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .card-number {
+    font-size: 1.5rem;
+  }
+  
+  .balance-amount {
+    font-size: 1.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .btn-large {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .support-card {
+    padding: 1.5rem;
+  }
+  
+  .discord-main-card {
+    padding: 1.5rem;
+  }
+}
+
+/* ===========================================
+   ANIMATIONS AVANCÉES
+   =========================================== */
+
+.card,
+.support-card,
+.mod-card {
+  animation: slideUp 0.6s ease-out;
+}
+
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+
+.feature-item:nth-child(1) { animation-delay: 0.1s; }
+.feature-item:nth-child(2) { animation-delay: 0.2s; }
+.feature-item:nth-child(3) { animation-delay: 0.3s; }
+.feature-item:nth-child(4) { animation-delay: 0.4s; }
+.feature-item:nth-child(5) { animation-delay: 0.5s; }
+.feature-item:nth-child(6) { animation-delay: 0.6s; }
+
+/* Effet de particules pour les boutons */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Effet de lueur sur les éléments neon */
+.neon-text,
+.page-title,
+.section-title {
+  position: relative;
+}
+
+.neon-text::after,
+.page-title::after,
+.section-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--neon-green);
+  filter: blur(10px);
+  z-index: -1;
+  opacity: 0.7;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--darker-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-green-bright);
+}
+
+/* Selection personnalisée */
+::selection {
+  background: rgba(0, 255, 65, 0.3);
+  color: var(--text-primary);
+}
+
+/* Focus states pour l'accessibilité */
+button:focus,
+a:focus,
+input:focus {
+  outline: 2px solid var(--neon-green);
+  outline-offset: 2px;
+}
+
+/* ===========================================
+   ÉTATS DE CHARGEMENT
+   =========================================== */
+
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--card-bg) 25%, var(--card-hover) 50%, var(--card-bg) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===========================================
+   PRINT STYLES
+   =========================================== */
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .navbar,
+  .mobile-menu,
+  .hero-actions,
+  .discord-actions {
+    display: none !important;
+  }
+  
+  .page-content {
+    padding: 1rem !important;
+  }
+  
+  .card,
+  .support-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ===========================================
+   DARK MODE ADJUSTMENTS
+   =========================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --dark-bg: #0a0a0a;
+  }
+}
+
+/* ===========================================
+   REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .neon-text,
+  .online-dot,
+  .hero-badge {
+    animation: none !important;
+  }
+}
+
+/* ===========================================
+   HIGH CONTRAST MODE
+   =========================================== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --neon-green: #00ff00;
+    --text-primary: #ffffff;
+    --text-secondary: #ffffff;
+    --border-color: #ffffff;
+  }
+  
+  .card,
+  .support-card {
+    border-width: 2px;
+  }
+}
+
+/* ===========================================
+   STYLES CSS MANQUANTS - CORRECTIF ADDITIONNEL
+   À ajouter à la fin de votre style.css existant
+   =========================================== */
+
+/* ===========================================
+   STYLES POUR LES MODS (GÉNÉRÉS PAR JS)
+   =========================================== */
+
+.mods-stats-header {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.mods-stats-header .card.special {
+  border-color: var(--neon-green);
+  background: rgba(0, 255, 65, 0.05);
 }
 
 .mod-header {
@@ -1125,8 +1487,7 @@ body::before {
   min-width: 0;
 }
 
-.mod-name,
-.mod-title {
+.mod-name {
   font-weight: 600;
   color: var(--text-primary);
   font-size: 1.1rem;
@@ -1140,26 +1501,6 @@ body::before {
   font-family: 'Courier New', monospace;
 }
 
-.mod-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.badge-official {
-  background: rgba(0, 255, 65, 0.2);
-  color: var(--neon-green);
-  border: 1px solid var(--neon-green);
-}
-
-.badge-exclusive {
-  background: rgba(139, 92, 246, 0.2);
-  color: #8b5cf6;
-  border: 1px solid #8b5cf6;
-}
-
 .exclusive-badge {
   position: absolute;
   top: -5px;
@@ -1171,12 +1512,6 @@ body::before {
   border-radius: 10px;
   font-weight: 600;
   z-index: 1;
-}
-
-.mod-description {
-  color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 0.9rem;
 }
 
 .mod-actions {
@@ -1233,10 +1568,234 @@ body::before {
 }
 
 /* ===========================================
-   PAGE DES CARTES - OPTIMISÉE POUR 600x600px
+   STYLES POUR LE DROPDOWN UTILISATEUR
    =========================================== */
 
-/* Header du cluster */
+.dropdown-menu.active {
+  display: block;
+}
+
+.user-profile {
+  position: relative;
+}
+
+.user-profile.show {
+  display: block;
+}
+
+/* ===========================================
+   STYLES POUR LES NOTIFICATIONS
+   =========================================== */
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  z-index: 10000;
+  transform: translateX(100%);
+  transition: var(--transition);
+  box-shadow: var(--shadow-neon);
+  font-family: 'Inter', sans-serif;
+  max-width: 300px;
+}
+
+.notification.show {
+  transform: translateX(0);
+}
+
+.notification.success {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+}
+
+.notification.error {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+/* ===========================================
+   AMÉLIORATIONS RESPONSIVE POUR LES MODS
+   =========================================== */
+
+@media (max-width: 768px) {
+  .mod-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .mod-icon-container {
+    align-self: center;
+  }
+  
+  .mod-info {
+    text-align: center;
+  }
+  
+  .mod-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .mod-link {
+    flex: none;
+    width: 100%;
+  }
+  
+  .copy-id-btn {
+    align-self: center;
+  }
+  
+  .mods-stats-header {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* ===========================================
+   STYLES POUR LE DASHBOARD UTILISATEUR
+   =========================================== */
+
+.card-icon.trophy,
+.card-icon.rank,
+.card-icon.participation {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+/* ===========================================
+   CORRECTIFS POUR LA PAGE SERVEUR
+   =========================================== */
+
+.section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-header .section-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 2rem;
+  color: var(--neon-green);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 15px var(--neon-green);
+}
+
+.section-header .section-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* Assure que le dashboard utilisateur est bien centré */
+#user-dashboard {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#user-dashboard.dashboard-section {
+  margin-bottom: 3rem;
+}
+
+/* ===========================================
+   STYLES POUR LES ÉTATS DE CHARGEMENT
+   =========================================== */
+
+#stats-loader,
+#mods-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+#stats-loader::after,
+#mods-loader::after {
+  content: '';
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--neon-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ===========================================
+   UTILITAIRES SUPPLÉMENTAIRES
+   =========================================== */
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-neon {
+  color: var(--neon-green);
+  text-shadow: 0 0 10px var(--neon-green);
+}
+
+.bg-neon {
+  background: rgba(0, 255, 65, 0.05);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+}
+
+.border-neon {
+  border: 1px solid var(--neon-green);
+}
+
+/* ===========================================
+   CORRECTIONS SPÉCIFIQUES
+   =========================================== */
+
+/* Force le bon affichage des grilles */
+.stats-grid,
+.dashboard-grid,
+.mods-grid,
+.support-grid {
+  width: 100%;
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* Centrage global pour toutes les pages */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+/* ===========================================
+   STYLES POUR LA PAGE DES CARTES - VERSION OPTIMISÉE
+   Spécialement adapté pour images carrées 600x600px
+   =========================================== */
+
+/* ===========================================
+   HEADER DU CLUSTER
+   =========================================== */
+
 .cluster-stats-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -1303,7 +1862,10 @@ body::before {
   font-size: 0.9rem;
 }
 
-/* Sections des cartes */
+/* ===========================================
+   SECTIONS DES CARTES
+   =========================================== */
+
 .maps-section {
   margin-bottom: 3rem;
 }
@@ -1336,7 +1898,10 @@ body::before {
   font-size: 1rem;
 }
 
-/* Grille des cartes - OPTIMISÉE pour 600x600 */
+/* ===========================================
+   GRILLE DES CARTES - OPTIMISÉE POUR 600x600
+   =========================================== */
+
 .maps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -1445,7 +2010,10 @@ body::before {
     inset 0 0 0 2px rgba(139, 92, 246, 0.4);
 }
 
-/* Conteneur d'image - OPTIMISÉ pour format carré 600x600 */
+/* ===========================================
+   CONTENEUR D'IMAGE - OPTIMISÉ POUR FORMAT CARRÉ
+   =========================================== */
+
 .map-image-container {
   position: relative;
   width: 100%;
@@ -1460,6 +2028,7 @@ body::before {
   object-fit: cover;
   object-position: center;
   transition: var(--transition);
+  /* Optimisations pour le rendu */
   image-rendering: -webkit-optimize-contrast;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -1486,7 +2055,10 @@ body::before {
   filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.3));
 }
 
-/* Badges repositionnés */
+/* ===========================================
+   BADGES - REPOSITIONNÉS POUR LE NOUVEAU FORMAT
+   =========================================== */
+
 .map-status-badge {
   position: absolute;
   top: 15px;
@@ -1541,7 +2113,10 @@ body::before {
   to { box-shadow: 0 0 20px rgba(139, 92, 246, 0.8); }
 }
 
-/* Contenu des cartes */
+/* ===========================================
+   CONTENU DES CARTES
+   =========================================== */
+
 .map-content {
   padding: 1.5rem;
   flex: 1;
@@ -1590,7 +2165,10 @@ body::before {
   color: #ff8c42;
 }
 
-/* Caractéristiques */
+/* ===========================================
+   CARACTÉRISTIQUES
+   =========================================== */
+
 .map-features {
   margin-bottom: 1.5rem;
 }
@@ -1645,7 +2223,7 @@ body::before {
 }
 
 /* ===========================================
-   MODAL DES DÉTAILS
+   MODAL DES DÉTAILS - OPTIMISÉ POUR IMAGES CARRÉES
    =========================================== */
 
 .map-modal {
@@ -1726,7 +2304,7 @@ body::before {
 
 .modal-map-image {
   width: 100%;
-  height: 320px;
+  height: 320px; /* Même hauteur que les cartes */
   object-fit: cover;
   object-position: center;
   border-radius: 15px;
@@ -1780,6 +2358,20 @@ body::before {
   margin-top: 3rem;
 }
 
+.info-card.large {
+  background: rgba(0, 255, 65, 0.05);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+}
+
+.info-card.large h3 {
+  color: var(--neon-green);
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
 .transfer-details {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1812,118 +2404,7 @@ body::before {
 }
 
 /* ===========================================
-   UTILITAIRES ET HELPERS
-   =========================================== */
-
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-.hidden { display: none !important; }
-.visible { display: block !important; }
-
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mt-4 { margin-top: 2rem; }
-
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 2rem; }
-
-.p-1 { padding: 0.5rem; }
-.p-2 { padding: 1rem; }
-.p-3 { padding: 1.5rem; }
-.p-4 { padding: 2rem; }
-
-.fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.slide-up {
-  animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.text-neon {
-  color: var(--neon-green);
-  text-shadow: 0 0 10px var(--neon-green);
-}
-
-.bg-neon {
-  background: rgba(0, 255, 65, 0.05);
-  border: 1px solid rgba(0, 255, 65, 0.2);
-}
-
-.border-neon {
-  border: 1px solid var(--neon-green);
-}
-
-/* ===========================================
-   NOTIFICATIONS
-   =========================================== */
-
-.notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--card-bg);
-  border: 1px solid var(--neon-green);
-  color: var(--neon-green);
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  z-index: 10000;
-  transform: translateX(100%);
-  transition: var(--transition);
-  box-shadow: var(--shadow-neon);
-  font-family: 'Inter', sans-serif;
-  max-width: 300px;
-}
-
-.notification.show {
-  transform: translateX(0);
-}
-
-.notification.success {
-  border-color: var(--neon-green);
-  color: var(--neon-green);
-}
-
-.notification.error {
-  border-color: #ff4444;
-  color: #ff4444;
-}
-
-/* ===========================================
-   RESPONSIVE DESIGN
+   RESPONSIVE - ADAPTÉ POUR IMAGES CARRÉES
    =========================================== */
 
 @media (max-width: 1200px) {
@@ -1932,100 +2413,16 @@ body::before {
     gap: 2rem;
   }
   
-  .map-image-container,
+  .map-image-container {
+    height: 280px;
+  }
+  
   .modal-map-image {
     height: 280px;
   }
 }
 
-@media (max-width: 1024px) {
-  .nav-container {
-    padding: 1rem 1.5rem;
-  }
-  
-  .hero {
-    padding: 1.5rem;
-  }
-  
-  .page-content {
-    padding: 5rem 1.5rem 2rem;
-  }
-}
-
 @media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-  }
-  
-  .mobile-menu {
-    display: flex;
-  }
-  
-  .nav-container {
-    padding: 1rem;
-  }
-  
-  .hero-title {
-    font-size: 2.5rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.1rem;
-  }
-  
-  .hero-actions {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .page-content {
-    padding: 5rem 1rem 1rem;
-  }
-  
-  .page-title {
-    font-size: 2rem;
-  }
-  
-  .discord-main-card {
-    padding: 2rem;
-  }
-  
-  .discord-features {
-    grid-template-columns: 1fr;
-  }
-  
-  .discord-stats {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .support-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .support-info {
-    grid-template-columns: 1fr;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .mods-grid {
-    grid-template-columns: 1fr;
-  }
-  
   .maps-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -2048,8 +2445,7 @@ body::before {
     font-size: 1.4rem;
   }
   
-  .map-image-container,
-  .modal-map-image {
+  .map-image-container {
     height: 250px;
   }
   
@@ -2064,93 +2460,16 @@ body::before {
     font-size: 0.8rem;
   }
   
+  .modal-map-image {
+    height: 250px;
+  }
+  
   .transfer-details {
     grid-template-columns: 1fr;
-  }
-  
-  .mod-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .mod-icon-container {
-    align-self: center;
-  }
-  
-  .mod-info {
-    text-align: center;
-  }
-  
-  .mod-actions {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .mod-link {
-    flex: none;
-    width: 100%;
-  }
-  
-  .copy-id-btn {
-    align-self: center;
-  }
-  
-  .mods-stats-header {
-    flex-direction: column;
-    align-items: center;
   }
 }
 
 @media (max-width: 480px) {
-  .nav-brand span {
-    font-size: 1.2rem;
-  }
-  
-  .hero-title {
-    font-size: 2rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-  
-  .page-title {
-    font-size: 1.8rem;
-  }
-  
-  .discord-main-card h2 {
-    font-size: 1.5rem;
-  }
-  
-  .section-title {
-    font-size: 1.5rem;
-  }
-  
-  .card-number {
-    font-size: 1.5rem;
-  }
-  
-  .balance-amount {
-    font-size: 1.5rem;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .btn-large {
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
-  }
-  
-  .support-card {
-    padding: 1.5rem;
-  }
-  
-  .discord-main-card {
-    padding: 1.5rem;
-  }
-  
   .map-card {
     margin: 0 0.5rem;
   }
@@ -2163,8 +2482,7 @@ body::before {
     padding: 1rem;
   }
   
-  .map-image-container,
-  .modal-map-image {
+  .map-image-container {
     height: 220px;
   }
   
@@ -2187,6 +2505,10 @@ body::before {
     top: 40px;
   }
   
+  .modal-map-image {
+    height: 200px;
+  }
+  
   .modal-header,
   .modal-body,
   .modal-footer {
@@ -2195,68 +2517,7 @@ body::before {
 }
 
 /* ===========================================
-   ANIMATIONS AVANCÉES
-   =========================================== */
-
-.card,
-.support-card,
-.mod-card {
-  animation: slideUp 0.6s ease-out;
-}
-
-.card:nth-child(1) { animation-delay: 0.1s; }
-.card:nth-child(2) { animation-delay: 0.2s; }
-.card:nth-child(3) { animation-delay: 0.3s; }
-.card:nth-child(4) { animation-delay: 0.4s; }
-
-.feature-item:nth-child(1) { animation-delay: 0.1s; }
-.feature-item:nth-child(2) { animation-delay: 0.2s; }
-.feature-item:nth-child(3) { animation-delay: 0.3s; }
-.feature-item:nth-child(4) { animation-delay: 0.4s; }
-.feature-item:nth-child(5) { animation-delay: 0.5s; }
-.feature-item:nth-child(6) { animation-delay: 0.6s; }
-
-/* Effet de particules pour les boutons */
-.btn-primary::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.btn-primary:active::after {
-  width: 300px;
-  height: 300px;
-}
-
-/* Effet de lueur sur les éléments neon */
-.neon-text,
-.page-title,
-.section-title {
-  position: relative;
-}
-
-.neon-text::after,
-.page-title::after,
-.section-title::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: var(--neon-green);
-  filter: blur(10px);
-  z-index: -1;
-  opacity: 0.7;
-}
-
-/* ===========================================
-   PERFORMANCE ET OPTIMISATIONS
+   OPTIMISATIONS DE PERFORMANCE
    =========================================== */
 
 .map-card {
@@ -2267,6 +2528,7 @@ body::before {
   will-change: auto;
 }
 
+/* Fallback pour images manquantes */
 .map-image[src=""],
 .map-image:not([src]) {
   display: none;
@@ -2276,6 +2538,7 @@ body::before {
   display: flex !important;
 }
 
+/* Style pour les images en cours de chargement */
 .map-image[loading="lazy"] {
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -2283,135 +2546,4 @@ body::before {
 
 .map-image[loading="lazy"].loaded {
   opacity: 1;
-}
-
-/* ===========================================
-   SCROLLBAR ET SÉLECTION
-   =========================================== */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--darker-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--neon-green);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--neon-green-bright);
-}
-
-::selection {
-  background: rgba(0, 255, 65, 0.3);
-  color: var(--text-primary);
-}
-
-button:focus,
-a:focus,
-input:focus {
-  outline: 2px solid var(--neon-green);
-  outline-offset: 2px;
-}
-
-/* ===========================================
-   ÉTATS DE CHARGEMENT
-   =========================================== */
-
-.loading {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.skeleton {
-  background: linear-gradient(90deg, var(--card-bg) 25%, var(--card-hover) 50%, var(--card-bg) 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* ===========================================
-   PRINT STYLES
-   =========================================== */
-
-@media print {
-  body {
-    background: white !important;
-    color: black !important;
-  }
-  
-  .navbar,
-  .mobile-menu,
-  .hero-actions,
-  .discord-actions {
-    display: none !important;
-  }
-  
-  .page-content {
-    padding: 1rem !important;
-  }
-  
-  .card,
-  .support-card {
-    border: 1px solid #ccc !important;
-    box-shadow: none !important;
-  }
-}
-
-/* ===========================================
-   DARK MODE ADJUSTMENTS
-   =========================================== */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text-primary: #ffffff;
-    --text-secondary: #cccccc;
-    --dark-bg: #0a0a0a;
-  }
-}
-
-/* ===========================================
-   REDUCED MOTION
-   =========================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .neon-text,
-  .online-dot,
-  .hero-badge {
-    animation: none !important;
-  }
-}
-
-/* ===========================================
-   HIGH CONTRAST MODE
-   =========================================== */
-
-@media (prefers-contrast: high) {
-  :root {
-    --neon-green: #00ff00;
-    --text-primary: #ffffff;
-    --text-secondary: #ffffff;
-    --border-color: #ffffff;
-  }
-  
-  .card,
-  .support-card {
-    border-width: 2px;
-  }
 }
