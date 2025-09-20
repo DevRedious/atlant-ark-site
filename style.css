@@ -2884,6 +2884,20 @@ input:focus {
   }
 }
 
+/* ...autres styles... */
+
+/* === Z-INDEX MENU BURGER === */
+.mobile-overlay {
+  z-index: 1000;
+}
+.nav-menu {
+  z-index: 1001;
+}
+.mobile-menu {
+  z-index: 1100;
+}
+
+/* ...autres styles... */
 
 /* === MENU BURGER & RESPONSIVE === */
 @media (max-width: 768px) {
