@@ -2815,7 +2815,7 @@ input:focus {
     padding: 2rem 0 !important;
     gap: 1rem !important;
     transition: left 0.3s ease !important;
-    z-index: 99999 !important; /* AU-DESSUS de tout */
+    z-index: 9999999 !important; /* AU-DESSUS de tout */
   }
 
   .nav-menu.active {
