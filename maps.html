@@ -92,50 +92,32 @@
     <div class="container">
       <header class="page-header">
         <h1 class="page-title">Cartes Disponibles</h1>
-        <p class="page-subtitle">Explorez toutes les cartes disponibles sur notre cluster Atlant'ARK</p>
+        <p class="page-subtitle">Explorez toutes les cartes disponibles sur notre réseau Atlant'ARK</p>
       </header>
 
-      <!-- Résumé du cluster -->
-      <section class="cluster-overview">
-        <div class="cluster-stats">
-          <div class="cluster-stat">
-            <div class="stat-number" id="total-maps">6</div>
-            <div class="stat-label">Cartes Actives</div>
-          </div>
-          <div class="cluster-stat">
-            <div class="stat-number" id="cluster-players">0</div>
-            <div class="stat-label">Joueurs Connectés</div>
-          </div>
-          <div class="cluster-stat">
-            <div class="stat-number">🔄</div>
-            <div class="stat-label">Transferts Activés</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Grille des cartes -->
+      <!-- Chargement et grille des cartes -->
       <section class="maps-section">
         <div id="maps-loader" class="loader"></div>
-        <div id="maps-grid" class="maps-grid" style="display:none;">
+        <div id="maps-grid" style="display:none;">
           <!-- Les cartes seront générées par JavaScript -->
         </div>
       </section>
 
-      <!-- Informations sur les transferts -->
+      <!-- Informations sur les transferts (seulement pour le cluster) -->
       <section class="transfer-info">
         <div class="info-card large">
-          <h3>🔄 Système de Transfert</h3>
+          <h3>🔄 Système de Transfert - Cluster Principal</h3>
           <div class="transfer-details">
             <div class="transfer-item">
               <span class="transfer-icon">👤</span>
               <div>
-                <strong>Personnages :</strong> Transfert libre entre toutes les cartes
+                <strong>Personnages :</strong> Transfert libre entre toutes les cartes du cluster
               </div>
             </div>
             <div class="transfer-item">
               <span class="transfer-icon">🦕</span>
               <div>
-                <strong>Dinosaures :</strong> Transfert complet autorisé
+                <strong>Dinosaures :</strong> Transfert complet autorisé dans le cluster
               </div>
             </div>
             <div class="transfer-item">
@@ -151,6 +133,9 @@
               </div>
             </div>
           </div>
+          <p style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+            ⚠️ Note : Les serveurs indépendants ne font pas partie du cluster et n'autorisent pas les transferts.
+          </p>
         </div>
       </section>
     </div>
