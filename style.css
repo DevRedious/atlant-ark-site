@@ -2985,3 +2985,37 @@ input:focus {
     padding: 0.75rem 2rem;
   }
 }
+
+/* ============================
+   MENU BURGER - VERSION MOBILE
+   ============================ */
+
+.nav-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 75%;
+  height: 100%;
+  background: var(--card-bg);
+  box-shadow: -2px 0 10px rgba(0,0,0,0.5);
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 5rem 2rem;
+  transition: right 0.3s ease;
+  z-index: 999;
+}
+
+.nav-menu.active {
+  right: 0;
+}
+
+.nav-menu .nav-link {
+  display: block;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.nav-menu .nav-link:hover {
+  color: var(--neon-green);
+}
