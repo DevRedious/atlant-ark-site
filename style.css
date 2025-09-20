@@ -2987,35 +2987,39 @@ input:focus {
 }
 
 /* ============================
-   MENU BURGER - VERSION MOBILE
+   MENU BURGER RESPONSIVE
    ============================ */
+@media (max-width: 768px) {
+  .nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    height: 100%;
+    background: var(--card-bg);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5rem 2rem;
+    gap: 2rem;
+    transition: right 0.3s ease;
+    z-index: 999;
+  }
 
-.nav-menu {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 75%;
-  height: 100%;
-  background: var(--card-bg);
-  box-shadow: -2px 0 10px rgba(0,0,0,0.5);
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 5rem 2rem;
-  transition: right 0.3s ease;
-  z-index: 999;
+  .nav-menu.active {
+    right: 0;
+  }
+
+  .nav-menu .nav-link {
+    display: block;
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    width: 100%;
+  }
+
+  .nav-menu .nav-link:hover {
+    color: var(--neon-green);
+  }
 }
 
-.nav-menu.active {
-  right: 0;
-}
-
-.nav-menu .nav-link {
-  display: block;
-  font-size: 1.2rem;
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
-.nav-menu .nav-link:hover {
-  color: var(--neon-green);
-}
