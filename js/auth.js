@@ -1,239 +1,558 @@
-// ===========================
-// CONFIGURATION
-// ===========================
+// =============================================
+//   AUTH.JS - SYSTÈME D'AUTHENTIFICATION
+//   Atlant'ARK - Gestion complète de l'auth Discord
+// =============================================
 
-const API_URL = "https://atlantark-token.up.railway.app";
+// Configuration API
+const API_BASE_URL = 'https://atlantark-token.up.railway.app';
+
+// Variables globales
 let currentUser = null;
+let userMenuVisible = false;
 
-// ===========================
-// AUTHENTIFICATION DISCORD
-// ===========================
+// =============================================
+//   INITIALISATION
+// =============================================
 
-function loginWithDiscord() {
-  window.location.href = `${API_URL}/auth/discord`;
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔐 Système d\'authentification initialisé');
+    
+    // Vérifier l'état d'authentification
+    checkAuthenticationStatus();
+    
+    // Vérifier les messages de redirection
+    checkForRedirectMessage();
+    
+    // Charger les stats du serveur
+    loadServerStats();
+    
+    // Initialiser les événements
+    initializeEventListeners();
+});
+
+// =============================================
+//   GESTION DE L'AUTHENTIFICATION
+// =============================================
+
+async function checkAuthenticationStatus() {
+    const token = localStorage.getItem('auth_token');
+    
+    if (!token) {
+        showLoginButton();
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            currentUser = data.user;
+            await showUserProfile();
+        } else {
+            // Token invalide
+            localStorage.removeItem('auth_token');
+            showLoginButton();
+        }
+    } catch (error) {
+        console.error('Erreur vérification auth:', error);
+        showLoginButton();
+    }
 }
 
-function toggleUserMenu() {
-  const menu = document.getElementById('user-menu');
-  if (menu) {
-    menu.classList.toggle('active');
-  }
+function loginWithDiscord() {
+    window.location.href = `${API_BASE_URL}/auth/discord`;
 }
 
 function logout() {
-  localStorage.removeItem('auth_token');
-  currentUser = null;
-  
-  const loginBtn = document.getElementById('login-btn');
-  const userProfile = document.getElementById('user-profile');
-  
-  if (loginBtn) loginBtn.style.display = 'flex';
-  if (userProfile) userProfile.style.display = 'none';
-  
-  // Masquer le dashboard si on est sur la page serveur
-  const dashboard = document.getElementById('user-dashboard');
-  if (dashboard) {
-    dashboard.style.display = 'none';
-  }
-  
-  showNotification('Déconnecté avec succès');
+    localStorage.removeItem('auth_token');
+    currentUser = null;
+    showLoginButton();
+    
+    // Fermer le menu s'il est ouvert
+    hideUserMenu();
+    
+    // Rediriger vers l'accueil si on est sur une page protégée
+    if (window.location.pathname.includes('economie.html')) {
+        window.location.href = 'index.html';
+    }
 }
 
+// =============================================
+//   GESTION DE L'INTERFACE UTILISATEUR
+// =============================================
+
+function showLoginButton() {
+    const loginBtn = document.getElementById('login-btn');
+    const userProfile = document.getElementById('user-profile');
+    
+    if (loginBtn) {
+        loginBtn.style.display = 'flex';
+    }
+    if (userProfile) {
+        userProfile.style.display = 'none';
+    }
+}
+
+async function showUserProfile() {
+    const loginBtn = document.getElementById('login-btn');
+    const userProfile = document.getElementById('user-profile');
+    
+    if (loginBtn) {
+        loginBtn.style.display = 'none';
+    }
+    if (userProfile) {
+        userProfile.style.display = 'flex';
+        await updateUserProfileDisplay();
+    }
+}
+
+async function updateUserProfileDisplay() {
+    if (!currentUser) return;
+    
+    // Mettre à jour l'avatar
+    const userAvatar = document.getElementById('user-avatar');
+    if (userAvatar && currentUser.avatar) {
+        userAvatar.src = `https://cdn.discordapp.com/avatars/${currentUser.discord_id}/${currentUser.avatar}.png`;
+        userAvatar.alt = `Avatar de ${currentUser.username}`;
+    }
+    
+    // Mettre à jour le nom
+    const userName = document.getElementById('user-name');
+    if (userName) {
+        userName.textContent = currentUser.username;
+    }
+    
+    // Mettre à jour le solde
+    await updateUserBalance();
+}
+
+async function updateUserBalance() {
+    const userBalance = document.getElementById('user-balance');
+    if (!userBalance) return;
+    
+    try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`${API_BASE_URL}/economy/balance`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const balanceText = userBalance.querySelector('span') || userBalance.lastChild;
+            if (balanceText) {
+                balanceText.textContent = ` ${data.formatted_balance || data.balance || 0}`;
+            }
+        }
+    } catch (error) {
+        console.error('Erreur chargement solde:', error);
+        // Garder l'affichage par défaut en cas d'erreur
+    }
+}
+
+// =============================================
+//   GESTION DU MENU UTILISATEUR
+// =============================================
+
+function toggleUserMenu() {
+    const userMenu = document.getElementById('user-menu');
+    if (!userMenu) return;
+    
+    if (userMenuVisible) {
+        hideUserMenu();
+    } else {
+        showUserMenu();
+    }
+}
+
+function showUserMenu() {
+    const userMenu = document.getElementById('user-menu');
+    if (userMenu) {
+        userMenu.classList.add('active');
+        userMenuVisible = true;
+        
+        // Fermer le menu si on clique ailleurs
+        setTimeout(() => {
+            document.addEventListener('click', closeMenuOnClickOutside);
+        }, 100);
+    }
+}
+
+function hideUserMenu() {
+    const userMenu = document.getElementById('user-menu');
+    if (userMenu) {
+        userMenu.classList.remove('active');
+        userMenuVisible = false;
+        document.removeEventListener('click', closeMenuOnClickOutside);
+    }
+}
+
+function closeMenuOnClickOutside(event) {
+    const userProfile = document.getElementById('user-profile');
+    if (userProfile && !userProfile.contains(event.target)) {
+        hideUserMenu();
+    }
+}
+
+// =============================================
+//   ACTIONS DU MENU UTILISATEUR
+// =============================================
+
 function showProfile() {
-  showNotification('Page profil - En développement');
+    hideUserMenu();
+    
+    if (!currentUser) {
+        alert('Erreur: Utilisateur non connecté');
+        return;
+    }
+    
+    // Créer et afficher un modal de profil
+    showProfileModal();
 }
 
 function showHistory() {
-  showNotification('Historique des enchères - En développement');
-}
-
-async function verifyAndLoadUser(token) {
-  try {
-    const response = await fetch(`${API_URL}/auth/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.valid) {
-        currentUser = data.user;
-        showUserInterface();
-        await loadUserProfile();
-      }
-    } else {
-      localStorage.removeItem('auth_token');
-    }
-  } catch (err) {
-    console.error('Erreur vérification token:', err);
-    localStorage.removeItem('auth_token');
-  }
-}
-
-function showUserInterface() {
-  const loginBtn = document.getElementById('login-btn');
-  const userProfile = document.getElementById('user-profile');
-  
-  if (loginBtn) loginBtn.style.display = 'none';
-  if (userProfile) userProfile.style.display = 'block';
-  
-  // Afficher le dashboard si on est sur la page serveur
-  const dashboard = document.getElementById('user-dashboard');
-  if (dashboard) {
-    dashboard.style.display = 'block';
-  }
-}
-
-async function loadUserProfile() {
-  try {
-    const token = localStorage.getItem('auth_token');
-    const response = await fetch(`${API_URL}/user/profile`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (response.ok) {
-      const profile = await response.json();
-      
-      // Mise à jour des éléments de profil
-      const userName = document.getElementById('user-name');
-      const userBalance = document.getElementById('user-balance');
-      const userAvatar = document.getElementById('user-avatar');
-      
-      if (userName) userName.textContent = profile.username;
-      if (userBalance) {
-        userBalance.innerHTML = `<img src="assets/images/aqualis.png" class="currency-icon" alt="Aqualis"> ${profile.balance}`;
-      }
-      if (userAvatar && profile.avatar_url) {
-        userAvatar.src = profile.avatar_url;
-      }
-
-      // Mise à jour du dashboard si présent
-      const myBalance = document.getElementById('my-balance');
-      const myWins = document.getElementById('my-wins');
-      const myRank = document.getElementById('my-rank');
-      const myAuctions = document.getElementById('my-auctions');
-      
-      if (myBalance) myBalance.textContent = profile.balance.toLocaleString();
-      if (myWins) myWins.textContent = profile.auction_wins || 0;
-      if (myRank) myRank.textContent = profile.rank || '#-';
-      if (myAuctions) myAuctions.textContent = profile.total_auctions || 0;
-    }
-  } catch (err) {
-    console.error('Erreur profil:', err);
-  }
-}
-
-// ===========================
-// CHARGEMENT RAPIDE DES STATS
-// ===========================
-
-async function loadQuickStats() {
-  try {
-    const res = await fetch(`${API_URL}/stats`);
-    const data = await res.json();
+    hideUserMenu();
     
-    // Mise à jour du badge dans la navigation
-    const quickPlayers = document.getElementById('quick-players');
-    if (quickPlayers) {
-      quickPlayers.innerText = data.players_online || 0;
+    if (!currentUser) {
+        alert('Erreur: Utilisateur non connecté');
+        return;
     }
-  } catch (err) {
-    console.error("Erreur stats rapides:", err);
-    const quickPlayers = document.getElementById('quick-players');
-    if (quickPlayers) {
-      quickPlayers.innerText = "0";
-    }
-  }
+    
+    // Rediriger vers la page économie
+    goToEconomy();
 }
 
-// ===========================
-// SYSTÈME DE NOTIFICATIONS
-// ===========================
+function showProfileModal() {
+    // Supprimer le modal existant s'il y en a un
+    const existingModal = document.getElementById('profile-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Créer le modal
+    const modal = document.createElement('div');
+    modal.id = 'profile-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-2xl);
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+    `;
+    
+    modalContent.innerHTML = `
+        <h2 style="color: var(--neon-green); margin-bottom: var(--spacing-lg);">Mon Profil</h2>
+        <img src="https://cdn.discordapp.com/avatars/${currentUser.discord_id}/${currentUser.avatar}.png" 
+             alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: var(--spacing-md);">
+        <h3 style="color: var(--text-primary); margin-bottom: var(--spacing-sm);">${currentUser.username}</h3>
+        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Membre d'Atlant'ARK</p>
+        <button onclick="closeProfileModal()" class="btn-primary" style="margin-top: var(--spacing-md);">
+            Fermer
+        </button>
+    `;
+    
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    
+    // Fermer avec Escape
+    document.addEventListener('keydown', function closeOnEscape(e) {
+        if (e.key === 'Escape') {
+            closeProfileModal();
+            document.removeEventListener('keydown', closeOnEscape);
+        }
+    });
+}
 
-function showNotification(message, type = 'success') {
-  const notification = document.createElement('div');
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--card-bg);
-    border: 1px solid var(--neon-green);
-    color: var(--neon-green);
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
-    z-index: 10000;
-    transform: translateX(100%);
-    transition: var(--transition);
-    box-shadow: var(--shadow-neon);
-    font-family: 'Inter', sans-serif;
-  `;
-  notification.textContent = message;
-  document.body.appendChild(notification);
-  
-  setTimeout(() => {
-    notification.style.transform = 'translateX(0)';
-  }, 10);
-  
-  setTimeout(() => {
-    notification.style.transform = 'translateX(100%)';
+function closeProfileModal() {
+    const modal = document.getElementById('profile-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// =============================================
+//   GESTION DE L'ÉCONOMIE
+// =============================================
+
+function goToEconomy() {
+    const token = localStorage.getItem('auth_token');
+    
+    if (!token || !currentUser) {
+        // Pas connecté - proposer la connexion
+        if (confirm('Vous devez être connecté pour accéder à votre solde. Se connecter maintenant ?')) {
+            loginWithDiscord();
+        }
+        return;
+    }
+    
+    // Connecté - aller à la page économie
+    window.location.href = 'economie.html';
+}
+
+// Actualiser le solde (appelable depuis d'autres pages)
+async function refreshUserBalance() {
+    await updateUserBalance();
+}
+
+// =============================================
+//   GESTION DES REDIRECTIONS
+// =============================================
+
+function checkForRedirectMessage() {
+    const message = sessionStorage.getItem('balance_redirect_message') || 
+                   sessionStorage.getItem('economy_redirect_message');
+    
+    if (message) {
+        // Supprimer le message pour qu'il ne s'affiche qu'une fois
+        sessionStorage.removeItem('balance_redirect_message');
+        sessionStorage.removeItem('economy_redirect_message');
+        
+        // Afficher le message à l'utilisateur
+        showRedirectNotification(message);
+    }
+}
+
+function showRedirectNotification(message) {
+    // Créer une notification temporaire
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 193, 7, 0.95);
+        color: #000;
+        padding: 1rem 1.5rem;
+        border-radius: var(--border-radius);
+        border-left: 4px solid #ffc107;
+        box-shadow: var(--shadow-lg);
+        z-index: 9999;
+        max-width: 350px;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+        animation: slideInFromRight 0.3s ease-out;
+    `;
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span>⚠️</span>
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+                background: none;
+                border: none;
+                font-size: 18px;
+                cursor: pointer;
+                margin-left: auto;
+                color: #000;
+                font-weight: bold;
+            ">×</button>
+        </div>
+    `;
+    
+    // Ajouter les styles CSS pour l'animation
+    if (!document.getElementById('notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideInFromRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Supprimer automatiquement après 5 secondes
     setTimeout(() => {
-      if (document.body.contains(notification)) {
-        document.body.removeChild(notification);
-      }
-    }, 300);
-  }, 3000);
+        if (notification.parentElement) {
+            notification.style.animation = 'slideInFromRight 0.3s ease-out reverse';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
 }
 
-// ===========================
-// ÉVÉNEMENTS ET INITIALISATION
-// ===========================
+// =============================================
+//   GESTION DES STATS DU SERVEUR
+// =============================================
 
-// Fermer les dropdowns en cliquant ailleurs
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.user-profile')) {
-    const userMenu = document.getElementById('user-menu');
-    if (userMenu) {
-      userMenu.classList.remove('active');
+async function loadServerStats() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/stats`);
+        if (response.ok) {
+            const data = await response.json();
+            updateServerStats(data);
+        }
+    } catch (error) {
+        console.error('Erreur chargement stats:', error);
+        // Garder les valeurs par défaut
     }
-  }
-});
+}
 
-// Initialisation au chargement
-window.addEventListener('load', async () => {
-  // Gestion de l'authentification
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-  const error = urlParams.get('error');
+function updateServerStats(stats) {
+    // Mettre à jour le compteur de joueurs en ligne
+    const quickPlayers = document.getElementById('quick-players');
+    if (quickPlayers && stats.players_online) {
+        quickPlayers.textContent = stats.players_online;
+    }
+    
+    // Mettre à jour d'autres stats si nécessaire
+    const playerCount = document.getElementById('player-count');
+    if (playerCount && stats.players_online) {
+        playerCount.textContent = stats.players_online;
+    }
+    
+    const uptime = document.getElementById('uptime');
+    if (uptime && stats.uptime) {
+        uptime.textContent = stats.uptime;
+    }
+    
+    const auctions = document.getElementById('auctions');
+    if (auctions && stats.active_auctions !== undefined) {
+        auctions.textContent = stats.active_auctions;
+    }
+    
+    const registeredPlayers = document.getElementById('registered-players');
+    if (registeredPlayers && stats.registered_players) {
+        registeredPlayers.textContent = stats.registered_players;
+    }
+}
 
-  if (error) {
-    console.error('Erreur auth:', error);
-    showNotification('Erreur de connexion: ' + error, 'error');
-    return;
-  }
+// =============================================
+//   GESTION DES ÉVÉNEMENTS
+// =============================================
 
-  if (token) {
-    localStorage.setItem('auth_token', token);
-    window.history.replaceState({}, document.title, window.location.origin + window.location.pathname);
-    showNotification('Connexion réussie !');
-  }
+function initializeEventListeners() {
+    // Fermer le menu utilisateur avec Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && userMenuVisible) {
+            hideUserMenu();
+        }
+    });
+    
+    // Gestion de l'URL pour l'auth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const error = urlParams.get('error');
+    
+    if (token) {
+        // Sauvegarder le token et nettoyer l'URL
+        localStorage.setItem('auth_token', token);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Recharger l'état d'authentification
+        setTimeout(() => {
+            checkAuthenticationStatus();
+        }, 100);
+    } else if (error) {
+        // Gérer les erreurs d'authentification
+        console.error('Erreur auth:', error);
+        showRedirectNotification('Erreur de connexion avec Discord');
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
 
-  const savedToken = localStorage.getItem('auth_token');
-  if (savedToken) {
-    await verifyAndLoadUser(savedToken);
-  }
+// =============================================
+//   FONCTIONS UTILITAIRES
+// =============================================
 
-  // Chargement des stats rapides pour le badge
-  loadQuickStats();
-});
+// Vérifier si l'utilisateur est connecté
+function isLoggedIn() {
+    return currentUser !== null && localStorage.getItem('auth_token') !== null;
+}
 
-// Auto-refresh du profil utilisateur toutes les 2 minutes
+// Obtenir l'utilisateur actuel
+function getCurrentUser() {
+    return currentUser;
+}
+
+// Obtenir le token d'authentification
+function getAuthToken() {
+    return localStorage.getItem('auth_token');
+}
+
+// Faire un appel API authentifié
+async function apiCall(endpoint, options = {}) {
+    const token = getAuthToken();
+    if (!token) {
+        throw new Error('Non authentifié');
+    }
+    
+    const defaultOptions = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    };
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: defaultOptions.headers
+    });
+    
+    if (!response.ok) {
+        if (response.status === 401) {
+            // Token expiré
+            logout();
+            throw new Error('Session expirée');
+        }
+        throw new Error(`Erreur API: ${response.status}`);
+    }
+    
+    return response.json();
+}
+
+// =============================================
+//   EXPORTS POUR UTILISATION GLOBALE
+// =============================================
+
+// Rendre les fonctions disponibles globalement
+window.AuthModule = {
+    loginWithDiscord,
+    logout,
+    toggleUserMenu,
+    showProfile,
+    showHistory,
+    goToEconomy,
+    refreshUserBalance,
+    isLoggedIn,
+    getCurrentUser,
+    getAuthToken,
+    apiCall
+};
+
+// Actualisation périodique des stats (toutes les 30 secondes)
 setInterval(() => {
-  if (currentUser) {
-    loadUserProfile();
-  }
-}, 120000);
+    loadServerStats();
+    if (isLoggedIn()) {
+        updateUserBalance();
+    }
+}, 30000);
 
-// Auto-refresh des stats rapides toutes les 30 secondes
-setInterval(loadQuickStats, 30000);
+console.log('✅ Module d\'authentification chargé');
