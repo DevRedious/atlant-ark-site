@@ -133,23 +133,27 @@ async function updateUserProfileDisplay() {
     await updateUserBalance();
 }
 
+// Fonction corrigée pour récupérer le profil utilisateur
 async function updateUserBalance() {
     const userBalance = document.getElementById('user-balance');
     if (!userBalance) return;
-    
+
     try {
         const token = localStorage.getItem('auth_token');
-        const response = await fetch(`${API_BASE_URL}/economy/balance`, {
+        // ROUTE CORRIGÉE : /user/profile au lieu de /economy/balance
+        const response = await fetch(`${API_BASE_URL}/user/profile`, {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         });
-        
+
         if (response.ok) {
             const data = await response.json();
             const balanceText = userBalance.querySelector('span') || userBalance.lastChild;
             if (balanceText) {
-                balanceText.textContent = ` ${data.formatted_balance || data.balance || 0}`;
+                // data.balance au lieu de data.formatted_balance
+                balanceText.textContent = `${data.balance || 0} Aqualis`;
             }
         }
     } catch (error) {
