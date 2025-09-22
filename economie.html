@@ -123,53 +123,82 @@
             <div class="stat-mini-label">Pseudo ARK</div>
           </div>
           <div class="stat-mini-card">
+            <div class="stat-mini-value" id="user-rank">-</div>
+            <div class="stat-mini-label">Classement</div>
+          </div>
+          <div class="stat-mini-card">
+            <div class="stat-mini-value" id="user-wins">-</div>
+            <div class="stat-mini-label">Enchères gagnées</div>
+          </div>
+          <div class="stat-mini-card">
             <div class="stat-mini-value" id="last-update">-</div>
             <div class="stat-mini-label">Dernière MAJ</div>
           </div>
         </div>
 
-        <!-- Historique récent (optionnel) -->
-        <div class="card" id="recent-transactions" style="display: none;">
-          <h3 style="color: var(--neon-green); margin-bottom: var(--spacing-md);">📊 Dernières Transactions</h3>
-          <div id="transactions-list"></div>
-          <button class="btn-secondary" onclick="toggleTransactions()" style="margin-top: var(--spacing-md); width: 100%;">
+        <!-- Historique des enchères -->
+        <div class="card">
+          <h3 style="color: var(--neon-green); margin-bottom: var(--spacing-md);">📊 Historique des Enchères</h3>
+          <div id="auction-history-content">
+            <p style="color: var(--text-muted); text-align: center;">Cliquez pour charger votre historique</p>
+          </div>
+          <button class="btn-secondary" onclick="loadAuctionHistory()" id="history-toggle-btn" style="margin-top: var(--spacing-md); width: 100%;">
             Afficher l'historique
           </button>
         </div>
 
-        <!-- Info Discord -->
+        <!-- Informations et commandes Discord -->
         <div class="info-card">
-          <h3>💬 Discord</h3>
-          <p>Pour modifier votre solde, contactez un administrateur sur Discord ou utilisez la commande <code>/balance</code> pour vérifier votre solde.</p>
-          <p><strong>Commandes disponibles :</strong></p>
-          <ul style="list-style: none; padding-left: 0; margin-top: var(--spacing-md);">
-            <li style="margin-bottom: var(--spacing-sm);">• <code>/balance</code> - Voir votre solde</li>
-            <li style="margin-bottom: var(--spacing-sm);">• Contactez un admin pour les modifications</li>
-          </ul>
+          <h3>💬 Commandes Discord</h3>
+          <p>Gérez votre solde directement depuis Discord avec ces commandes :</p>
+          <div style="display: grid; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+            <div style="background: var(--bg-secondary); padding: var(--spacing-sm); border-radius: var(--border-radius); font-family: 'Courier New', monospace;">
+              <strong>/balance</strong> - Voir votre solde actuel
+            </div>
+            <div style="background: var(--bg-secondary); padding: var(--spacing-sm); border-radius: var(--border-radius); font-family: 'Courier New', monospace;">
+              <strong>/register [pseudo]</strong> - Enregistrer votre pseudo ARK
+            </div>
+            <div style="background: var(--bg-secondary); padding: var(--spacing-sm); border-radius: var(--border-radius); font-family: 'Courier New', monospace;">
+              <strong>/classement</strong> - Voir le classement des joueurs
+            </div>
+          </div>
+          <p style="margin-top: var(--spacing-md);">
+            <strong>Note :</strong> Pour modifier votre solde, contactez un administrateur sur Discord.
+          </p>
         </div>
       </div>
     </div>
   </main>
 
+  <!-- Scripts externes -->
   <script src="js/auth.js"></script>
   <script src="js/mobile-menu.js"></script>
+  
+  <!-- Script principal de la page économie -->
   <script>
-    // Configuration API
+    // ===========================
+    // CONFIGURATION
+    // ===========================
     const API_BASE_URL = 'https://atlantark-token.up.railway.app';
     let currentUser = null;
+    let historyLoaded = false;
 
-    // Initialisation
+    // ===========================
+    // INITIALISATION
+    // ===========================
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('💰 Page solde initialisée');
-      checkAuthStatusAndRedirect();
+      console.log('💰 Initialisation de la page économie');
+      checkAuthenticationStatus();
     });
 
-    // Vérification auth avec redirection
-    async function checkAuthStatusAndRedirect() {
+    // ===========================
+    // GESTION DE L'AUTHENTIFICATION
+    // ===========================
+    async function checkAuthenticationStatus() {
       const token = localStorage.getItem('auth_token');
       
       if (!token) {
-        redirectToLogin('Vous devez être connecté pour voir votre solde');
+        redirectToLogin('Vous devez être connecté pour accéder à cette page');
         return;
       }
       
@@ -183,23 +212,28 @@
         if (response.ok) {
           const data = await response.json();
           currentUser = data.user;
-          showEconomyContent();
-          await loadBalance();
+          await initializePage();
         } else {
           localStorage.removeItem('auth_token');
-          redirectToLogin('Session expirée');
+          redirectToLogin('Session expirée, veuillez vous reconnecter');
         }
       } catch (error) {
-        console.error('Erreur auth:', error);
-        redirectToLogin('Erreur de connexion');
+        console.error('Erreur de vérification:', error);
+        redirectToLogin('Erreur de connexion au serveur');
       }
     }
 
     function redirectToLogin(message = '') {
       if (message) {
-        sessionStorage.setItem('balance_redirect_message', message);
+        sessionStorage.setItem('economy_redirect_message', message);
       }
       window.location.href = 'index.html';
+    }
+
+    async function initializePage() {
+      showEconomyContent();
+      await loadUserProfile();
+      updateLastUpdateTime();
     }
 
     function showEconomyContent() {
@@ -207,110 +241,221 @@
       document.getElementById('economy-content').style.display = 'block';
     }
 
-    // Chargement du solde
-    async function loadBalance() {
+    // ===========================
+    // CHARGEMENT DES DONNÉES
+    // ===========================
+    async function loadUserProfile() {
       try {
         const token = localStorage.getItem('auth_token');
-        const response = await fetch(`${API_BASE_URL}/economy/balance`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const response = await fetch(`${API_BASE_URL}/user/profile`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
         
         if (response.ok) {
-          const data = await response.json();
-          updateBalanceDisplay(data);
+          const userData = await response.json();
+          updateUserInterface(userData);
         } else {
-          showError('Erreur lors du chargement du solde');
+          throw new Error(`Erreur HTTP: ${response.status}`);
         }
       } catch (error) {
-        console.error('Erreur chargement solde:', error);
-        showError('Impossible de charger le solde');
+        console.error('Erreur lors du chargement du profil:', error);
+        showNotification('Impossible de charger les données du profil', 'error');
       }
     }
 
-    function updateBalanceDisplay(data) {
-      document.getElementById('main-balance').textContent = data.formatted_balance;
-      document.getElementById('user-pseudo').textContent = data.ark_name || 'Non défini';
-      document.getElementById('last-update').textContent = new Date().toLocaleTimeString('fr-FR', {
+    function updateUserInterface(userData) {
+      // Mise à jour du solde principal
+      const formattedBalance = userData.balance ? userData.balance.toLocaleString('fr-FR') : '0';
+      document.getElementById('main-balance').textContent = formattedBalance;
+      
+      // Mise à jour des informations utilisateur
+      document.getElementById('user-pseudo').textContent = userData.ark_name || 'Non défini';
+      document.getElementById('user-rank').textContent = userData.rank || 'Non classé';
+      document.getElementById('user-wins').textContent = userData.auction_wins || '0';
+      
+      updateLastUpdateTime();
+    }
+
+    function updateLastUpdateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit'
       });
+      document.getElementById('last-update').textContent = timeString;
     }
 
-    // Actualisation manuelle
+    // ===========================
+    // ACTUALISATION MANUELLE
+    // ===========================
     async function refreshBalance() {
       const button = event.target;
       const originalText = button.textContent;
+      
       button.innerHTML = '🔄 Actualisation...';
       button.disabled = true;
       
-      await loadBalance();
-      
-      setTimeout(() => {
-        button.textContent = originalText;
-        button.disabled = false;
-      }, 1000);
-    }
-
-    // Gestion des transactions (optionnel)
-    async function toggleTransactions() {
-      const container = document.getElementById('recent-transactions');
-      const list = document.getElementById('transactions-list');
-      const button = event.target;
-      
-      if (container.style.display === 'none' || !container.style.display) {
-        try {
-          const token = localStorage.getItem('auth_token');
-          const response = await fetch(`${API_BASE_URL}/economy/transactions?limit=5`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            displayTransactions(data.transactions);
-            container.style.display = 'block';
-            button.textContent = 'Masquer l\'historique';
-          }
-        } catch (error) {
-          console.error('Erreur transactions:', error);
-        }
-      } else {
-        container.style.display = 'none';
-        button.textContent = 'Afficher l\'historique';
+      try {
+        await loadUserProfile();
+        showNotification('Solde actualisé avec succès', 'success');
+      } catch (error) {
+        showNotification('Erreur lors de l\'actualisation', 'error');
+      } finally {
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 1000);
       }
     }
 
-    function displayTransactions(transactions) {
-      const list = document.getElementById('transactions-list');
+    // ===========================
+    // HISTORIQUE DES ENCHÈRES
+    // ===========================
+    async function loadAuctionHistory() {
+      const button = document.getElementById('history-toggle-btn');
+      const content = document.getElementById('auction-history-content');
       
-      if (transactions.length === 0) {
-        list.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Aucune transaction trouvée</p>';
+      if (historyLoaded) {
+        // Masquer l'historique
+        content.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Cliquez pour charger votre historique</p>';
+        button.textContent = 'Afficher l\'historique';
+        historyLoaded = false;
         return;
       }
       
-      list.innerHTML = transactions.map(tx => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-sm); border-bottom: 1px solid var(--border-color);">
-          <div>
-            <div style="font-weight: 600; color: var(--text-primary);">${tx.description}</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted);">${tx.created_at}</div>
-          </div>
-          <div style="font-weight: 700; color: ${tx.direction === 'incoming' ? 'var(--success)' : 'var(--danger)'};">
-            ${tx.formatted_amount} LC
-          </div>
-        </div>
-      `).join('');
+      // Charger l'historique
+      button.innerHTML = '🔄 Chargement...';
+      button.disabled = true;
+      
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`${API_BASE_URL}/user/history`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const historyData = await response.json();
+          displayAuctionHistory(historyData);
+          button.textContent = 'Masquer l\'historique';
+          historyLoaded = true;
+        } else {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement de l\'historique:', error);
+        content.innerHTML = '<p style="color: var(--danger); text-align: center;">Erreur lors du chargement de l\'historique</p>';
+        showNotification('Impossible de charger l\'historique', 'error');
+      } finally {
+        button.disabled = false;
+      }
     }
 
-    function showError(message) {
-      console.error(message);
-      // Tu peux implémenter une notification ici
+    function displayAuctionHistory(historyData) {
+      const content = document.getElementById('auction-history-content');
+      
+      if (!historyData || historyData.length === 0) {
+        content.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Aucune enchère trouvée dans votre historique</p>';
+        return;
+      }
+      
+      const historyHTML = historyData.map(auction => {
+        const date = new Date(auction.created_at).toLocaleDateString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        const formattedPrice = auction.final_price.toLocaleString('fr-FR');
+        const statusColor = auction.won ? 'var(--success)' : 'var(--text-muted)';
+        const statusText = auction.won ? 'Remporté' : 'Participé';
+        const statusIcon = auction.won ? '🏆' : '📈';
+        
+        return `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: var(--spacing-sm); background: var(--bg-secondary);">
+            <div style="flex: 1;">
+              <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">
+                ${statusIcon} ${auction.dino_name}
+              </div>
+              <div style="font-size: 0.9rem; color: var(--text-muted);">
+                ${date}
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 700; color: ${statusColor}; margin-bottom: var(--spacing-xs);">
+                ${formattedPrice} Aqualis
+              </div>
+              <div style="font-size: 0.85rem; color: ${statusColor};">
+                ${statusText}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      content.innerHTML = historyHTML;
     }
 
-    // Actualisation automatique toutes les 30 secondes
+    // ===========================
+    // NOTIFICATIONS
+    // ===========================
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      const colors = {
+        success: 'var(--success)',
+        error: 'var(--danger)',
+        info: 'var(--neon-blue)'
+      };
+      
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${colors[type] || colors.info};
+        color: white;
+        padding: var(--spacing-md);
+        border-radius: var(--border-radius);
+        z-index: 1000;
+        max-width: 350px;
+        font-weight: 600;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+      `;
+      
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      // Animation d'entrée
+      setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+      }, 100);
+      
+      // Animation de sortie et suppression
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+      }, 4000);
+    }
+
+    // ===========================
+    // ACTUALISATION AUTOMATIQUE
+    // ===========================
     setInterval(() => {
       if (currentUser && document.getElementById('economy-content').style.display !== 'none') {
-        loadBalance();
+        loadUserProfile();
       }
-    }, 30000);
+    }, 60000); // Actualisation toutes les minutes
   </script>
 </body>
 </html>
