@@ -1708,5 +1708,98 @@ a:hover {
 }
 
 /* =============================================
+   21. ECONOMY PAGE
+   ============================================= */
+.balance-showcase { margin-bottom: var(--spacing-2xl); }
+
+.balance-main-card {
+  background: var(--card-bg);
+  border: 2px solid var(--neon-green-dim);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.balance-main-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 255, 65, 0.03) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+.balance-amount-large {
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 900;
+  font-family: 'Orbitron', sans-serif;
+  color: var(--neon-green);
+  text-shadow: 0 0 20px var(--neon-green);
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.balance-label-large {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  position: relative;
+  z-index: 1;
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.stat-mini-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.stat-mini-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--neon-green);
+  font-family: 'Orbitron', sans-serif;
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-mini-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-required {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.auth-required h3 {
+  color: var(--neon-green);
+  margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+  .balance-main-card { padding: var(--spacing-lg); }
+  .balance-amount-large { font-size: clamp(2rem, 12vw, 3.5rem); }
+  .stats-overview { grid-template-columns: 1fr; }
+}
+
+/* =============================================
    FIN DU FICHIER CSS
    ============================================= */
