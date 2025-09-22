@@ -150,11 +150,11 @@ async function updateUserBalance() {
 
         if (response.ok) {
             const data = await response.json();
-            const balanceText = userBalance.querySelector('span') || userBalance.lastChild;
+            const balanceText = document.getElementById('balance-value');
             if (balanceText) {
-                // data.balance au lieu de data.formatted_balance
-                balanceText.textContent = `${data.balance || 0} Aqualis`;
+                balanceText.textContent = data.balance || 0;
             }
+
         }
     } catch (error) {
         console.error('Erreur chargement solde:', error);
