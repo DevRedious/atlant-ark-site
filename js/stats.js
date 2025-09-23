@@ -1,11 +1,26 @@
 // ===========================
+// CONFIGURATION
+// ===========================
+const API_BASE_URL = 'https://atlantark-token.up.railway.app';
+// Compatibilité avec l'ancien nom de variable
+const API_URL = API_BASE_URL;
+
+// ===========================
 // CHARGEMENT DES STATISTIQUES
 // ===========================
 
 async function loadStats() {
   try {
+    console.log("🔄 Chargement des statistiques depuis:", `${API_URL}/stats`);
+    
     const res = await fetch(`${API_URL}/stats`);
+    
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
     const data = await res.json();
+    console.log("✅ Données reçues:", data);
 
     // Masquer le loader et afficher le contenu
     const statsLoader = document.getElementById("stats-loader");
@@ -23,9 +38,9 @@ async function loadStats() {
     // Mise à jour du badge dans la navigation
     updateStatElement("quick-players", data.players_online);
     
-    console.log("Statistiques chargées avec succès");
+    console.log("✅ Statistiques chargées avec succès");
   } catch (err) {
-    console.error("Erreur lors du chargement des statistiques:", err);
+    console.error("❌ Erreur lors du chargement des statistiques:", err);
     handleStatsError();
   }
 }
