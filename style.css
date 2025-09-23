@@ -620,6 +620,7 @@ a:hover {
   margin-bottom: var(--spacing-md);
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--neon-green) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: fadeInDown 0.8s ease-out;
 }
@@ -1802,4 +1803,3 @@ a:hover {
 
 /* =============================================
    FIN DU FICHIER CSS
-   ============================================= */

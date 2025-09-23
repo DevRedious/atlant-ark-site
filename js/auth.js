@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Charger les stats du serveur
     loadServerStats();
     
+    // Charger les Aqualis si connecté
+    updateUserAqualis();
+    
     // Initialiser les événements
     initializeEventListeners();
 });
@@ -131,6 +134,9 @@ async function updateUserProfileDisplay() {
     
     // Mettre à jour le solde
     await updateUserBalance();
+    
+    // Mettre à jour les Aqualis
+    await updateUserAqualis();
 }
 
 // Fonction corrigée pour récupérer le profil utilisateur
@@ -159,6 +165,38 @@ async function updateUserBalance() {
     } catch (error) {
         console.error('Erreur chargement solde:', error);
         // Garder l'affichage par défaut en cas d'erreur
+    }
+}
+
+// Fonction pour mettre à jour les Aqualis
+async function updateUserAqualis() {
+    const userBalance = document.getElementById('user-balance');
+    if (!userBalance || !isLoggedIn()) return;
+
+    try {
+        const aqualisResponse = await fetch(`${API_BASE_URL}/api/user/aqualis?user_id=${currentUser.discord_id}`);
+        
+        if (aqualisResponse.ok) {
+            const aqualisData = await aqualisResponse.json();
+            
+            // Trouver l'élément du solde Aqualis dans le widget utilisateur
+            const aqualisIcon = userBalance.querySelector('img[alt="Aqualis"]');
+            if (aqualisIcon) {
+                // Le texte se trouve généralement après l'icône
+                let balanceText = aqualisIcon.nextSibling;
+                if (balanceText && balanceText.nodeType === Node.TEXT_NODE) {
+                    balanceText.textContent = ` ${aqualisData.total}`;
+                } else {
+                    // Si pas de nœud texte, chercher un span ou autre élément
+                    const balanceSpan = aqualisIcon.parentElement.querySelector('.balance-value, [id$="balance"]');
+                    if (balanceSpan) {
+                        balanceSpan.textContent = aqualisData.total;
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des Aqualis:', error);
     }
 }
 
@@ -321,6 +359,12 @@ function goToEconomy() {
 // Actualiser le solde (appelable depuis d'autres pages)
 async function refreshUserBalance() {
     await updateUserBalance();
+    await updateUserAqualis();
+}
+
+// Actualiser seulement les Aqualis
+async function refreshUserAqualis() {
+    await updateUserAqualis();
 }
 
 // =============================================
@@ -545,6 +589,7 @@ window.AuthModule = {
     showHistory,
     goToEconomy,
     refreshUserBalance,
+    refreshUserAqualis,
     isLoggedIn,
     getCurrentUser,
     getAuthToken,
@@ -556,6 +601,7 @@ setInterval(() => {
     loadServerStats();
     if (isLoggedIn()) {
         updateUserBalance();
+        updateUserAqualis();
     }
 }, 30000);
 
