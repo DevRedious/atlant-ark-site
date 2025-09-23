@@ -197,32 +197,26 @@
     // GESTION DE L'AUTHENTIFICATION
     // ===========================
     async function checkAuthenticationStatus() {
-      const token = localStorage.getItem('auth_token');
+      // 🔄 Attendre que auth.js soit chargé et ait vérifié l'auth
+      if (typeof window.AuthModule === 'undefined') {
+        console.log('⏳ Attente du chargement d\'auth.js...');
+        setTimeout(checkAuthenticationStatus, 100);
+        return;
+      }
       
-      if (!token) {
+      // Utiliser la fonction d'auth.js
+      const isAuthenticated = window.AuthModule.isLoggedIn();
+      const user = window.AuthModule.getCurrentUser();
+      
+      if (!isAuthenticated || !user) {
         redirectToLogin('Vous devez être connecté pour accéder à cette page');
         return;
       }
       
-      try {
-        const response = await fetch(`${API_URL}/auth/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token })
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          currentUser = data.user;
-          await initializePage();
-        } else {
-          localStorage.removeItem('auth_token');
-          redirectToLogin('Session expirée, veuillez vous reconnecter');
-        }
-      } catch (error) {
-        console.error('Erreur de vérification:', error);
-        redirectToLogin('Erreur de connexion au serveur');
-      }
+      // Utilisateur connecté
+      currentUser = user;
+      console.log('✅ Utilisateur connecté:', currentUser);
+      await initializePage();
     }
 
     function redirectToLogin(message = '') {
@@ -248,23 +242,16 @@
     // ===========================
     async function loadUserProfile() {
       try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(`${API_URL}/user/profile`, {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (response.ok) {
-          const userData = await response.json();
-          updateUserInterface(userData);
-        } else {
-          throw new Error(`Erreur HTTP: ${response.status}`);
-        }
+        // Utiliser l'API moderne d'auth.js avec auto-refresh
+        const userData = await window.AuthModule.apiCall('/user/profile');
+        updateUserInterface(userData);
       } catch (error) {
         console.error('Erreur lors du chargement du profil:', error);
-        showNotification('Impossible de charger les données du profil', 'error');
+        if (error.message === 'Session expirée') {
+          redirectToLogin('Votre session a expiré, veuillez vous reconnecter');
+        } else {
+          showNotification('Impossible de charger les données du profil', 'error');
+        }
       }
     }
 
