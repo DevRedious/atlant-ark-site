@@ -23,6 +23,53 @@ function syncCurrentUser() {
 syncCurrentUser();
 
 // =============================================
+//   SÉCURITÉ CIA-LEVEL
+// =============================================
+
+function getCsrfToken() {
+    // Récupérer le token CSRF depuis les cookies
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrf_token') {
+            return value;
+        }
+    }
+    return null;
+}
+
+function isSecureCookieMode() {
+    // Vérifier si on utilise le mode cookies sécurisés
+    return getCsrfToken() !== null;
+}
+
+async function secureApiCall(endpoint, options = {}) {
+    // Appel API sécurisé avec token CSRF automatique
+    const defaultOptions = {
+        credentials: 'include', // Inclure les cookies HttpOnly
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    };
+    
+    // Ajouter token CSRF si disponible
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+        defaultOptions.headers['X-CSRF-Token'] = csrfToken;
+        console.log('🔒 Requête sécurisée avec CSRF token');
+    }
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        ...defaultOptions,
+        headers: { ...defaultOptions.headers, ...options.headers }
+    });
+    
+    return response;
+}
+
+// =============================================
 //   INITIALISATION
 // =============================================
 
@@ -49,21 +96,87 @@ document.addEventListener('DOMContentLoaded', function() {
 //   GESTION DE L'AUTHENTIFICATION
 // =============================================
 
-async function checkAuthenticationStatus() {
-    const token = localStorage.getItem('auth_token');
+async function refreshAccessToken() {
+    // Mode sécurisé: refresh automatique via cookies
+    if (isSecureCookieMode()) {
+        try {
+            console.log('🔒 Rafraîchissement sécurisé du token...');
+            const response = await secureApiCall('/auth/refresh', {
+                method: 'POST'
+            });
+            
+            if (response.ok) {
+                console.log('✅ Token rafraîchi avec succès (mode sécurisé)');
+                return true;
+            } else {
+                console.warn('⚠️ Échec du rafraîchissement sécurisé');
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Erreur rafraîchissement sécurisé:', error);
+            return false;
+        }
+    }
     
-    if (!token) {
+    // Mode compatibilité: localStorage
+    const refresh_token = localStorage.getItem('refresh_token');
+    if (!refresh_token) {
+        return false;
+    }
+    
+    try {
+        console.log('⚠️ Rafraîchissement mode compatibilité...');
+        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ refresh_token })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            console.log('✅ Token rafraîchi avec succès');
+            return true;
+        } else {
+            console.warn('⚠️ Échec du rafraîchissement du token');
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Erreur lors du rafraîchissement du token:', error);
+        return false;
+    }
+}
+
+async function checkAuthenticationStatus() {
+    // Nouveau système OAuth2
+    let access_token = localStorage.getItem('access_token');
+    const refresh_token = localStorage.getItem('refresh_token');
+    
+    // Ancien système (compatibilité)
+    const old_token = localStorage.getItem('auth_token');
+    
+    if (!access_token && !old_token) {
         showLoginButton();
         return;
     }
     
     try {
+        let token_to_use = access_token || old_token;
+        
+        // Choisir le bon format selon le type de token
+        let body_data = access_token ? 
+            { access_token: token_to_use } :  // Nouveau système
+            { token: token_to_use };          // Compatibilité ancien système
+        
         const response = await fetch(`${API_BASE_URL}/auth/verify`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ token })
+            body: JSON.stringify(body_data)
         });
         
         if (response.ok) {
@@ -74,9 +187,24 @@ async function checkAuthenticationStatus() {
             console.log('🔍 currentUser après assignation:', currentUser);
             syncCurrentUser(); // Synchroniser l'export global
             await showUserProfile();
+        } else if (response.status === 401 && refresh_token) {
+            // Token expiré, essayer de le rafraîchir
+            console.log('🔄 Token expiré, tentative de rafraîchissement...');
+            const refreshed = await refreshAccessToken();
+            if (refreshed) {
+                // Réessayer avec le nouveau token
+                await checkAuthenticationStatus();
+                return;
+            } else {
+                // Échec du refresh, déconnecter
+                logout();
+                return;
+            }
         } else {
             // Token invalide
             localStorage.removeItem('auth_token');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
             showLoginButton();
         }
     } catch (error) {
@@ -89,8 +217,37 @@ function loginWithDiscord() {
     window.location.href = `${API_BASE_URL}/auth/discord`;
 }
 
-function logout() {
+async function logout() {
+    try {
+        // Mode sécurisé: logout avec cookies et CSRF
+        if (isSecureCookieMode()) {
+            console.log('🔒 Déconnexion sécurisée...');
+            await secureApiCall('/auth/logout', {
+                method: 'POST'
+            });
+            console.log('✅ Déconnexion sécurisée réussie');
+        } else {
+            // Mode compatibilité: révocation avec localStorage
+            const refresh_token = localStorage.getItem('refresh_token');
+            if (refresh_token) {
+                console.log('⚠️ Déconnexion mode compatibilité...');
+                await fetch(`${API_BASE_URL}/auth/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ refresh_token })
+                });
+            }
+        }
+    } catch (error) {
+        console.warn('Erreur lors de la révocation du token:', error);
+    }
+    
+    // Nettoyer le stockage local (toujours nécessaire pour compatibilité)
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     currentUser = null;
     syncCurrentUser(); // Synchroniser l'export global
     showLoginButton();
@@ -174,22 +331,10 @@ async function updateUserBalance() {
     if (!userBalance) return;
 
     try {
-        const token = localStorage.getItem('auth_token');
-        // ROUTE CORRIGÉE : /user/profile au lieu de /economy/balance
-        const response = await fetch(`${API_BASE_URL}/user/profile`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const balanceText = document.getElementById('balance-value');
-            if (balanceText) {
-                balanceText.textContent = data.balance || 0;
-            }
-
+        const data = await apiCall('/user/profile');
+        const balanceText = document.getElementById('balance-value');
+        if (balanceText) {
+            balanceText.textContent = data.balance || 0;
         }
     } catch (error) {
         console.error('Erreur chargement solde:', error);
@@ -213,36 +358,24 @@ async function updateUserAqualis() {
     try {
         console.log(`🔄 Récupération Aqualis pour user_id: ${currentUser.discord_id}`);
         
-        // Utilisation de l'endpoint authentifié normal
-        const token = localStorage.getItem('auth_token');
-        const aqualisResponse = await fetch(`${API_BASE_URL}/api/user/aqualis`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        // Utilisation de l'endpoint authentifié avec auto-refresh
+        const aqualisData = await apiCall('/api/user/aqualis');
+        console.log('✅ Données Aqualis reçues:', aqualisData);
         
-        if (aqualisResponse.ok) {
-            const aqualisData = await aqualisResponse.json();
-            console.log('✅ Données Aqualis reçues:', aqualisData);
-            
-            // Trouver l'élément du solde Aqualis dans le widget utilisateur
-            const aqualisIcon = userBalance.querySelector('img[alt="Aqualis"]');
-            if (aqualisIcon) {
-                // Le texte se trouve généralement après l'icône
-                let balanceText = aqualisIcon.nextSibling;
-                if (balanceText && balanceText.nodeType === Node.TEXT_NODE) {
-                    balanceText.textContent = ` ${aqualisData.total}`;
-                } else {
-                    // Si pas de nœud texte, chercher un span ou autre élément
-                    const balanceSpan = aqualisIcon.parentElement.querySelector('.balance-value, [id$="balance"]');
-                    if (balanceSpan) {
-                        balanceSpan.textContent = aqualisData.total;
-                    }
+        // Trouver l'élément du solde Aqualis dans le widget utilisateur
+        const aqualisIcon = userBalance.querySelector('img[alt="Aqualis"]');
+        if (aqualisIcon) {
+            // Le texte se trouve généralement après l'icône
+            let balanceText = aqualisIcon.nextSibling;
+            if (balanceText && balanceText.nodeType === Node.TEXT_NODE) {
+                balanceText.textContent = ` ${aqualisData.total}`;
+            } else {
+                // Si pas de nœud texte, chercher un span ou autre élément
+                const balanceSpan = aqualisIcon.parentElement.querySelector('.balance-value, [id$="balance"]');
+                if (balanceSpan) {
+                    balanceSpan.textContent = aqualisData.total;
                 }
             }
-        } else {
-            console.warn(`⚠️ Échec récupération Aqualis: ${aqualisResponse.status} ${aqualisResponse.statusText}`);
         }
     } catch (error) {
         console.error('❌ Erreur lors de la récupération des Aqualis:', error);
@@ -552,13 +685,37 @@ function initializeEventListeners() {
         }
     });
     
-    // Gestion de l'URL pour l'auth callback
+    // Gestion de l'URL pour l'auth callback OAuth2 CIA-LEVEL
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const auth_success = urlParams.get('auth'); // Nouveau système sécurisé
+    const access_token = urlParams.get('access_token'); // Ancien système (compatibilité)
+    const refresh_token = urlParams.get('refresh_token'); // Ancien système (compatibilité)
+    const token = urlParams.get('token'); // Très ancien système
     const error = urlParams.get('error');
     
-    if (token) {
-        // Sauvegarder le token et nettoyer l'URL
+    if (auth_success === 'success') {
+        // 🔒 Nouveau système CIA-LEVEL: tokens dans cookies HttpOnly
+        console.log('🔒 Connexion réussie avec cookies sécurisés');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Vérification immédiate de l'authentification
+        setTimeout(() => {
+            checkAuthenticationStatus();
+        }, 100);
+        
+    } else if (access_token && refresh_token) {
+        // ⚠️ Ancien système: migration vers cookies sécurisés
+        console.log('⚠️ Migration vers système sécurisé...');
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('refresh_token', refresh_token);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Recharger l'état d'authentification
+        setTimeout(() => {
+            checkAuthenticationStatus();
+        }, 100);
+    } else if (token) {
+        // Ancien système (compatibilité)
         localStorage.setItem('auth_token', token);
         window.history.replaceState({}, document.title, window.location.pathname);
         
@@ -590,32 +747,48 @@ function getCurrentUser() {
 
 // Obtenir le token d'authentification
 function getAuthToken() {
-    return localStorage.getItem('auth_token');
+    // Prioriser l'access token, puis fallback sur l'ancien système
+    return localStorage.getItem('access_token') || localStorage.getItem('auth_token');
 }
 
 // Faire un appel API authentifié
 async function apiCall(endpoint, options = {}) {
-    const token = getAuthToken();
+    let token = getAuthToken();
     if (!token) {
         throw new Error('Non authentifié');
     }
     
-    const defaultOptions = {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
+    const makeRequest = async (authToken) => {
+        const defaultOptions = {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        };
+        
+        return await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers: defaultOptions.headers
+        });
     };
     
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers: defaultOptions.headers
-    });
+    let response = await makeRequest(token);
+    
+    // Si le token est expiré et qu'on a un refresh token, essayer de le rafraîchir
+    if (response.status === 401 && localStorage.getItem('refresh_token')) {
+        console.log('🔄 Token expiré dans apiCall, tentative de rafraîchissement...');
+        const refreshed = await refreshAccessToken();
+        if (refreshed) {
+            // Réessayer avec le nouveau token
+            token = getAuthToken();
+            response = await makeRequest(token);
+        }
+    }
     
     if (!response.ok) {
         if (response.status === 401) {
-            // Token expiré
+            // Token expiré définitivement
             logout();
             throw new Error('Session expirée');
         }
