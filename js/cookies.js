@@ -24,7 +24,7 @@ function initCookieBanner() {
   
   if (consent === 'accepted') {
     consentGiven = true;
-    console.log('🍪 Consentement cookies déjà accordé');
+    // console.log('🍪 Consentement cookies déjà accordé'); // Commenté pour éviter le spam console
     return;
   }
   

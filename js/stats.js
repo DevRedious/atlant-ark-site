@@ -185,11 +185,11 @@ if (window.location.pathname.includes('serveur.html') ||
     loadStatsWithRetry();
   });
   
-  // Auto-refresh des statistiques toutes les 30 secondes
+  // Auto-refresh des statistiques toutes les 60 secondes (réduit pour éviter le spam)
   setInterval(() => {
     console.log("Actualisation automatique des statistiques...");
     loadStats();
-  }, 30000);
+  }, 60000);
 }
 
 // ===========================
