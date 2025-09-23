@@ -818,6 +818,13 @@ window.AuthModule = {
     apiCall
 };
 
+// Exposer les fonctions principales directement sur window
+window.loginWithDiscord = loginWithDiscord;
+window.logout = logout;
+window.toggleUserMenu = toggleUserMenu;
+window.showProfile = showProfile;
+window.showHistory = showHistory;
+
 // Actualisation périodique des stats (toutes les 30 secondes)
 setInterval(() => {
     loadServerStats();
