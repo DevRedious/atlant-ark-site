@@ -2,10 +2,7 @@
 // CONFIGURATION
 // ===========================
 // Utilisation de la configuration partagée depuis auth.js
-// Si auth.js n'est pas chargé, fallback vers l'URL directe
-const API_BASE_URL = window.API_BASE_URL || 'https://atlantark-token.up.railway.app';
-// Compatibilité avec l'ancien nom de variable
-const API_URL = API_BASE_URL;
+const API_URL = window.API_BASE_URL || 'https://atlantark-token.up.railway.app';
 
 // ===========================
 // CHARGEMENT DES STATISTIQUES
