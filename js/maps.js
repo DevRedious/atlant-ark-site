@@ -220,8 +220,8 @@ async function loadMaps() {
     mapsGrid.style.display = "block";
     mapsGrid.innerHTML = "";
 
-    // PAS D'APPEL API - Mode statique uniquement
-    console.log("Mode statique - API désactivée pour les cartes");
+    // 🔒 MODE STATIQUE SÉCURISÉ - Pas d'appels API réseau
+    console.log("🛡️ Mode statique sécurisé - API désactivée pour les cartes");
     
     // Créer le header avec les statistiques du cluster
     createClusterHeader(mapsGrid);

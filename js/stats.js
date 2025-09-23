@@ -12,13 +12,23 @@ async function loadStats() {
   try {
     console.log("🔄 Chargement des statistiques depuis:", `${API_URL}/stats`);
     
-    const res = await fetch(`${API_URL}/stats`);
-    
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    // 🔒 Utilisation de l'API sécurisée si disponible
+    let data;
+    if (typeof secureApiCall === 'function') {
+      console.log("🛡️ Utilisation de l'API sécurisée");
+      data = await secureApiCall('/stats', 'GET');
+    } else {
+      // Fallback vers fetch classique si auth.js non chargé
+      console.log("⚠️ Fallback vers fetch standard");
+      const res = await fetch(`${API_URL}/stats`);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      data = await res.json();
     }
     
-    const data = await res.json();
     console.log("✅ Données reçues:", data);
 
     // Masquer le loader et afficher le contenu
