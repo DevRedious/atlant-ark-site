@@ -198,25 +198,46 @@
     // ===========================
     async function checkAuthenticationStatus() {
       // 🔄 Attendre que auth.js soit chargé et ait vérifié l'auth
-      if (typeof window.AuthModule === 'undefined') {
+      if (typeof window.AuthModule === 'undefined' || typeof window.currentUser === 'undefined') {
         console.log('⏳ Attente du chargement d\'auth.js...');
-        setTimeout(checkAuthenticationStatus, 100);
+        setTimeout(checkAuthenticationStatus, 200);
         return;
       }
       
-      // Utiliser la fonction d'auth.js
-      const isAuthenticated = window.AuthModule.isLoggedIn();
-      const user = window.AuthModule.getCurrentUser();
+      // Attendre que auth.js ait fini sa vérification initiale
+      // (peut prendre du temps pour traiter les tokens URL ou vérifier les cookies)
+      let retries = 0;
+      const maxRetries = 50; // 10 secondes max
       
-      if (!isAuthenticated || !user) {
-        redirectToLogin('Vous devez être connecté pour accéder à cette page');
-        return;
-      }
+      const waitForAuth = async () => {
+        const isAuthenticated = window.AuthModule.isLoggedIn();
+        const user = window.AuthModule.getCurrentUser();
+        
+        console.log(`🔍 Vérification auth (${retries}/${maxRetries}):`, {
+          isAuthenticated,
+          user: !!user,
+          currentUser: !!window.currentUser
+        });
+        
+        if (isAuthenticated && user) {
+          // Utilisateur connecté
+          currentUser = user;
+          console.log('✅ Utilisateur connecté:', currentUser);
+          await initializePage();
+          return;
+        }
+        
+        retries++;
+        if (retries < maxRetries) {
+          setTimeout(waitForAuth, 200);
+        } else {
+          // Timeout - probablement pas connecté
+          console.log('❌ Timeout authentification - redirection vers login');
+          redirectToLogin('Vous devez être connecté pour accéder à cette page');
+        }
+      };
       
-      // Utilisateur connecté
-      currentUser = user;
-      console.log('✅ Utilisateur connecté:', currentUser);
-      await initializePage();
+      await waitForAuth();
     }
 
     function redirectToLogin(message = '') {

@@ -737,7 +737,11 @@ function initializeEventListeners() {
 
 // Vérifier si l'utilisateur est connecté
 function isLoggedIn() {
-    return currentUser !== null && localStorage.getItem('auth_token') !== null;
+    // Vérifier si l'utilisateur est authentifié avec le nouveau ou l'ancien système
+    const hasNewTokens = localStorage.getItem('access_token') !== null;
+    const hasOldToken = localStorage.getItem('auth_token') !== null;
+    
+    return currentUser !== null && (hasNewTokens || hasOldToken);
 }
 
 // Obtenir l'utilisateur actuel
