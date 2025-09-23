@@ -181,7 +181,7 @@
     // ===========================
     // CONFIGURATION
     // ===========================
-    const API_URL = window.API_BASE_URL;
+    // Utilisation directe de window.API_BASE_URL depuis auth.js
     // currentUser est déjà déclaré dans auth.js (variable globale)
     let historyLoaded = false;
 
@@ -220,9 +220,8 @@
         });
         
         if (isAuthenticated && user) {
-          // Utilisateur connecté
-          currentUser = user;
-          console.log('✅ Utilisateur connecté:', currentUser);
+          // Utilisateur connecté - utiliser la variable globale
+          console.log('✅ Utilisateur connecté:', user);
           await initializePage();
           return;
         }
@@ -342,7 +341,7 @@
       
       try {
         const token = localStorage.getItem('auth_token');
-        const response = await fetch(`${API_URL}/user/history`, {
+        const response = await fetch(`${window.API_BASE_URL}/user/history`, {
           headers: { 
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -462,7 +461,7 @@
     // ACTUALISATION AUTOMATIQUE
     // ===========================
     setInterval(() => {
-      if (currentUser && document.getElementById('economy-content').style.display !== 'none') {
+      if (window.currentUser && document.getElementById('economy-content').style.display !== 'none') {
         loadUserProfile();
       }
     }, 120000); // Actualisation toutes les 2 minutes (réduit pour éviter le spam API)
