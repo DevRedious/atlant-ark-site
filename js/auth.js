@@ -379,6 +379,20 @@ async function updateUserAqualis() {
         }
     } catch (error) {
         console.error('❌ Erreur lors de la récupération des Aqualis:', error);
+        
+        // Fallback: afficher 0 ou un message d'erreur
+        const aqualisIcon = userBalance.querySelector('img[alt="Aqualis"]');
+        if (aqualisIcon) {
+            let balanceText = aqualisIcon.nextSibling;
+            if (balanceText && balanceText.nodeType === Node.TEXT_NODE) {
+                balanceText.textContent = ` 0`;
+            } else {
+                const balanceSpan = aqualisIcon.parentElement.querySelector('.balance-value, [id$="balance"]');
+                if (balanceSpan) {
+                    balanceSpan.textContent = '0';
+                }
+            }
+        }
     }
 }
 
