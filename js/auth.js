@@ -13,6 +13,15 @@ window.API_BASE_URL = API_BASE_URL;
 let currentUser = null;
 let userMenuVisible = false;
 
+// Export global de currentUser pour accès depuis d'autres scripts
+// Fonction helper pour synchroniser window.currentUser
+function syncCurrentUser() {
+    window.currentUser = currentUser;
+}
+
+// Initialisation
+syncCurrentUser();
+
 // =============================================
 //   INITIALISATION
 // =============================================
@@ -59,7 +68,11 @@ async function checkAuthenticationStatus() {
         
         if (response.ok) {
             const data = await response.json();
+            console.log('🔍 Données utilisateur reçues:', data);
+            console.log('🔍 Structure user:', data.user);
             currentUser = data.user;
+            console.log('🔍 currentUser après assignation:', currentUser);
+            syncCurrentUser(); // Synchroniser l'export global
             await showUserProfile();
         } else {
             // Token invalide
@@ -79,6 +92,7 @@ function loginWithDiscord() {
 function logout() {
     localStorage.removeItem('auth_token');
     currentUser = null;
+    syncCurrentUser(); // Synchroniser l'export global
     showLoginButton();
     
     // Fermer le menu s'il est ouvert
@@ -120,7 +134,18 @@ async function showUserProfile() {
 }
 
 async function updateUserProfileDisplay() {
-    if (!currentUser) return;
+    console.log('🔍 updateUserProfileDisplay - currentUser:', currentUser);
+    if (!currentUser) {
+        console.warn('⚠️ currentUser est null dans updateUserProfileDisplay');
+        return;
+    }
+    
+    console.log('🔍 currentUser.username:', currentUser.username);
+    console.log('🔍 currentUser.discord_id:', currentUser.discord_id);
+    console.log('🔍 currentUser.avatar:', currentUser.avatar);
+    
+    // Synchroniser l'export global
+    syncCurrentUser();
     
     // Mettre à jour l'avatar
     const userAvatar = document.getElementById('user-avatar');
@@ -132,7 +157,8 @@ async function updateUserProfileDisplay() {
     // Mettre à jour le nom
     const userName = document.getElementById('user-name');
     if (userName) {
-        userName.textContent = currentUser.username;
+        console.log('🔍 Mise à jour userName avec:', currentUser.username);
+        userName.textContent = currentUser.username || 'Utilisateur inconnu';
     }
     
     // Mettre à jour le solde
