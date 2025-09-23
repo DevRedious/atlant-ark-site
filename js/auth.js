@@ -1,6 +1,6 @@
 // =============================================
-//   AUTH.JS - SYSTÈME D'AUTHENTIFICATION
-//   Atlant'ARK - Gestion complète de l'auth Discord
+//   AUTH.JS - SYSTÈME D'AUTHENTIFICATION v2.1
+//   Atlant'ARK - Compatible avec API corrigée
 // =============================================
 
 // Configuration API
@@ -12,9 +12,9 @@ window.API_BASE_URL = API_BASE_URL;
 // Variables globales
 let currentUser = null;
 let userMenuVisible = false;
+let authInitialized = false;
 
 // Export global de currentUser pour accès depuis d'autres scripts
-// Fonction helper pour synchroniser window.currentUser
 function syncCurrentUser() {
     window.currentUser = currentUser;
 }
@@ -23,11 +23,30 @@ function syncCurrentUser() {
 syncCurrentUser();
 
 // =============================================
-//   SÉCURITÉ CIA-LEVEL
+//   GESTION D'ERREURS AMÉLIORÉE
+// =============================================
+
+class AuthError extends Error {
+    constructor(message, code = 'AUTH_ERROR') {
+        super(message);
+        this.name = 'AuthError';
+        this.code = code;
+    }
+}
+
+class APIError extends Error {
+    constructor(message, status = 500) {
+        super(message);
+        this.name = 'APIError';
+        this.status = status;
+    }
+}
+
+// =============================================
+//   GESTION CSRF ET SÉCURITÉ
 // =============================================
 
 function getCsrfToken() {
-    // Récupérer le token CSRF depuis les cookies
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
@@ -39,14 +58,12 @@ function getCsrfToken() {
 }
 
 function isSecureCookieMode() {
-    // Vérifier si on utilise le mode cookies sécurisés
     return getCsrfToken() !== null;
 }
 
 async function secureApiCall(endpoint, options = {}) {
-    // Appel API sécurisé avec token CSRF automatique
     const defaultOptions = {
-        credentials: 'include', // Inclure les cookies HttpOnly
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             ...options.headers
@@ -55,108 +72,144 @@ async function secureApiCall(endpoint, options = {}) {
     
     // Ajouter token CSRF si disponible
     const csrfToken = getCsrfToken();
-    if (csrfToken) {
+    if (csrfToken && ['POST', 'PUT', 'DELETE'].includes(options.method?.toUpperCase())) {
         defaultOptions.headers['X-CSRF-Token'] = csrfToken;
         console.log('🔒 Requête sécurisée avec CSRF token');
     }
     
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        ...defaultOptions,
-        headers: { ...defaultOptions.headers, ...options.headers }
-    });
-    
-    return response;
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            ...defaultOptions,
+            headers: { ...defaultOptions.headers, ...options.headers }
+        });
+        
+        // Gestion des erreurs HTTP
+        if (!response.ok) {
+            const errorText = await response.text();
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch {
+                errorData = { error: errorText };
+            }
+            
+            if (response.status === 401) {
+                throw new AuthError(errorData.detail || 'Authentication required', 'AUTH_REQUIRED');
+            } else if (response.status === 403) {
+                throw new AuthError(errorData.detail || 'Permission denied', 'PERMISSION_DENIED');
+            } else if (response.status === 429) {
+                throw new APIError(errorData.detail || 'Too many requests', 429);
+            } else {
+                throw new APIError(errorData.detail || `HTTP ${response.status}`, response.status);
+            }
+        }
+        
+        return response;
+    } catch (error) {
+        if (error instanceof AuthError || error instanceof APIError) {
+            throw error;
+        }
+        throw new APIError(`Network error: ${error.message}`);
+    }
 }
 
 // =============================================
-//   INITIALISATION
+//   INITIALISATION AMÉLIORÉE
 // =============================================
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔐 Système d\'authentification initialisé');
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🔐 Système d\'authentification v2.1 initialisé');
     
+    try {
+        // Initialisation séquentielle pour éviter les conflits
+        await initializeAuthentication();
+        authInitialized = true;
+        console.log('✅ Authentication système initialisé');
+    } catch (error) {
+        console.error('❌ Erreur initialisation auth:', error);
+        showLoginButton(); // Fallback sécurisé
+    }
+});
+
+async function initializeAuthentication() {
     // Vérifier l'état d'authentification
-    checkAuthenticationStatus();
+    await checkAuthenticationStatus();
     
     // Vérifier les messages de redirection
     checkForRedirectMessage();
     
-    // Charger les stats du serveur
-    loadServerStats();
-    
-    // Charger les Aqualis si connecté
-    updateUserAqualis();
+    // Charger les stats du serveur (non-bloquant)
+    loadServerStats().catch(error => console.warn('Stats loading failed:', error));
     
     // Initialiser les événements
     initializeEventListeners();
-});
+    
+    // Charger les Aqualis si connecté (non-bloquant)
+    if (currentUser) {
+        updateUserAqualis().catch(error => console.warn('Aqualis update failed:', error));
+    }
+}
 
 // =============================================
-//   GESTION DE L'AUTHENTIFICATION
+//   GESTION DE L'AUTHENTIFICATION AMÉLIORÉE
 // =============================================
 
 async function refreshAccessToken() {
-    // Mode sécurisé: refresh automatique via cookies
-    if (isSecureCookieMode()) {
-        try {
+    try {
+        // Mode sécurisé: refresh automatique via cookies
+        if (isSecureCookieMode()) {
             console.log('🔒 Rafraîchissement sécurisé du token...');
             const response = await secureApiCall('/auth/refresh', {
                 method: 'POST'
             });
             
-            if (response.ok) {
-                console.log('✅ Token rafraîchi avec succès (mode sécurisé)');
-                return true;
-            } else {
-                console.warn('⚠️ Échec du rafraîchissement sécurisé');
-                return false;
-            }
-        } catch (error) {
-            console.error('❌ Erreur rafraîchissement sécurisé:', error);
+            console.log('✅ Token rafraîchi avec succès (mode sécurisé)');
+            return true;
+        }
+        
+        // Mode compatibilité: localStorage
+        const refresh_token = localStorage.getItem('refresh_token');
+        if (!refresh_token) {
+            console.log('🚫 Aucun refresh token disponible');
             return false;
         }
-    }
-    
-    // Mode compatibilité: localStorage
-    const refresh_token = localStorage.getItem('refresh_token');
-    if (!refresh_token) {
-        return false;
-    }
-    
-    try {
+        
         console.log('⚠️ Rafraîchissement mode compatibilité...');
-        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        const response = await secureApiCall('/auth/refresh', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify({ refresh_token })
         });
         
         if (response.ok) {
             const data = await response.json();
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('refresh_token', data.refresh_token);
+            if (data.access_token && data.refresh_token) {
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
+            }
             console.log('✅ Token rafraîchi avec succès');
             return true;
-        } else {
-            console.warn('⚠️ Échec du rafraîchissement du token');
+        }
+        
+        return false;
+        
+    } catch (error) {
+        console.error('❌ Erreur rafraîchissement token:', error);
+        
+        if (error instanceof AuthError && error.code === 'AUTH_REQUIRED') {
+            // Token de refresh invalide/expiré
             return false;
         }
-    } catch (error) {
-        console.error('❌ Erreur lors du rafraîchissement du token:', error);
-        return false;
+        
+        // Autres erreurs (réseau, etc) - peut-être temporaire
+        throw error;
     }
 }
 
 async function checkAuthenticationStatus() {
-    // Nouveau système OAuth2
-    let access_token = localStorage.getItem('access_token');
+    const access_token = localStorage.getItem('access_token');
     const refresh_token = localStorage.getItem('refresh_token');
-    
-    // Ancien système (compatibilité)
-    const old_token = localStorage.getItem('auth_token');
+    const old_token = localStorage.getItem('auth_token'); // Compatibilité
     
     if (!access_token && !old_token) {
         showLoginButton();
@@ -164,53 +217,53 @@ async function checkAuthenticationStatus() {
     }
     
     try {
-        let token_to_use = access_token || old_token;
+        const token_to_use = access_token || old_token;
+        const body_data = access_token ? 
+            { access_token: token_to_use } : 
+            { token: token_to_use };
         
-        // Choisir le bon format selon le type de token
-        let body_data = access_token ? 
-            { access_token: token_to_use } :  // Nouveau système
-            { token: token_to_use };          // Compatibilité ancien système
-        
-        const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+        const response = await secureApiCall('/auth/verify', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(body_data)
         });
         
-        if (response.ok) {
-            const data = await response.json();
-            console.log('🔍 Données utilisateur reçues:', data);
-            console.log('🔍 Structure user:', data.user);
-            currentUser = data.user;
-            console.log('🔍 currentUser après assignation:', currentUser);
-            syncCurrentUser(); // Synchroniser l'export global
-            await showUserProfile();
-        } else if (response.status === 401 && refresh_token) {
+        const data = await response.json();
+        console.log('🔍 Données utilisateur reçues:', data);
+        
+        currentUser = data.user;
+        syncCurrentUser();
+        await showUserProfile();
+        
+    } catch (error) {
+        console.log('🔄 Erreur vérification token:', error);
+        
+        if (error instanceof AuthError && refresh_token) {
             // Token expiré, essayer de le rafraîchir
             console.log('🔄 Token expiré, tentative de rafraîchissement...');
-            const refreshed = await refreshAccessToken();
-            if (refreshed) {
-                // Réessayer avec le nouveau token
-                await checkAuthenticationStatus();
-                return;
-            } else {
-                // Échec du refresh, déconnecter
-                logout();
-                return;
+            try {
+                const refreshed = await refreshAccessToken();
+                if (refreshed) {
+                    // Réessayer avec le nouveau token
+                    await checkAuthenticationStatus();
+                    return;
+                }
+            } catch (refreshError) {
+                console.error('Erreur lors du refresh:', refreshError);
             }
-        } else {
-            // Token invalide
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            showLoginButton();
         }
-    } catch (error) {
-        console.error('Erreur vérification auth:', error);
+        
+        // Échec du refresh ou pas de refresh token, déconnecter
+        clearAuthData();
         showLoginButton();
     }
+}
+
+function clearAuthData() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    currentUser = null;
+    syncCurrentUser();
 }
 
 function loginWithDiscord() {
@@ -219,23 +272,17 @@ function loginWithDiscord() {
 
 async function logout() {
     try {
-        // Mode sécurisé: logout avec cookies et CSRF
         if (isSecureCookieMode()) {
             console.log('🔒 Déconnexion sécurisée...');
             await secureApiCall('/auth/logout', {
                 method: 'POST'
             });
-            console.log('✅ Déconnexion sécurisée réussie');
         } else {
-            // Mode compatibilité: révocation avec localStorage
             const refresh_token = localStorage.getItem('refresh_token');
             if (refresh_token) {
                 console.log('⚠️ Déconnexion mode compatibilité...');
-                await fetch(`${API_BASE_URL}/auth/logout`, {
+                await secureApiCall('/auth/logout', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({ refresh_token })
                 });
             }
@@ -244,18 +291,11 @@ async function logout() {
         console.warn('Erreur lors de la révocation du token:', error);
     }
     
-    // Nettoyer le stockage local (toujours nécessaire pour compatibilité)
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    currentUser = null;
-    syncCurrentUser(); // Synchroniser l'export global
+    clearAuthData();
     showLoginButton();
-    
-    // Fermer le menu s'il est ouvert
     hideUserMenu();
     
-    // Rediriger vers l'accueil si on est sur une page protégée
+    // Rediriger vers l'accueil si sur page protégée
     if (window.location.pathname.includes('economie.html')) {
         window.location.href = 'index.html';
     }
@@ -269,21 +309,15 @@ function showLoginButton() {
     const loginBtn = document.getElementById('login-btn');
     const userProfile = document.getElementById('user-profile');
     
-    if (loginBtn) {
-        loginBtn.style.display = 'flex';
-    }
-    if (userProfile) {
-        userProfile.style.display = 'none';
-    }
+    if (loginBtn) loginBtn.style.display = 'flex';
+    if (userProfile) userProfile.style.display = 'none';
 }
 
 async function showUserProfile() {
     const loginBtn = document.getElementById('login-btn');
     const userProfile = document.getElementById('user-profile');
     
-    if (loginBtn) {
-        loginBtn.style.display = 'none';
-    }
+    if (loginBtn) loginBtn.style.display = 'none';
     if (userProfile) {
         userProfile.style.display = 'flex';
         await updateUserProfileDisplay();
@@ -291,17 +325,11 @@ async function showUserProfile() {
 }
 
 async function updateUserProfileDisplay() {
-    console.log('🔍 updateUserProfileDisplay - currentUser:', currentUser);
     if (!currentUser) {
         console.warn('⚠️ currentUser est null dans updateUserProfileDisplay');
         return;
     }
     
-    console.log('🔍 currentUser.username:', currentUser.username);
-    console.log('🔍 currentUser.discord_id:', currentUser.discord_id);
-    console.log('🔍 currentUser.avatar:', currentUser.avatar);
-    
-    // Synchroniser l'export global
     syncCurrentUser();
     
     // Mettre à jour l'avatar
@@ -314,18 +342,16 @@ async function updateUserProfileDisplay() {
     // Mettre à jour le nom
     const userName = document.getElementById('user-name');
     if (userName) {
-        console.log('🔍 Mise à jour userName avec:', currentUser.username);
         userName.textContent = currentUser.username || 'Utilisateur inconnu';
     }
     
-    // Mettre à jour le solde
-    await updateUserBalance();
-    
-    // Mettre à jour les Aqualis
-    await updateUserAqualis();
+    // Mettre à jour le solde et les Aqualis
+    await Promise.all([
+        updateUserBalance().catch(err => console.warn('Balance update failed:', err)),
+        updateUserAqualis().catch(err => console.warn('Aqualis update failed:', err))
+    ]);
 }
 
-// Fonction corrigée pour récupérer le profil utilisateur
 async function updateUserBalance() {
     const userBalance = document.getElementById('user-balance');
     if (!userBalance) return;
@@ -338,50 +364,37 @@ async function updateUserBalance() {
         }
     } catch (error) {
         console.error('Erreur chargement solde:', error);
-        // Garder l'affichage par défaut en cas d'erreur
     }
 }
 
-// Fonction pour mettre à jour les Aqualis
 async function updateUserAqualis() {
     const userBalance = document.getElementById('user-balance');
-    if (!userBalance || !isLoggedIn() || !currentUser || !currentUser.discord_id) {
-        console.log('🔍 updateUserAqualis: conditions non remplies', {
-            userBalance: !!userBalance,
-            isLoggedIn: isLoggedIn(),
-            currentUser: !!currentUser,
-            discord_id: currentUser?.discord_id
-        });
+    if (!userBalance || !isLoggedIn() || !currentUser?.discord_id) {
         return;
     }
 
     try {
-        console.log(`🔄 Récupération Aqualis pour user_id: ${currentUser.discord_id}`);
-        
-        // Utilisation de l'endpoint authentifié avec auto-refresh
         const aqualisData = await apiCall('/api/user/aqualis');
         console.log('✅ Données Aqualis reçues:', aqualisData);
         
-        // Trouver l'élément du solde Aqualis dans le widget utilisateur
+        // Mettre à jour l'affichage des Aqualis
         const aqualisIcon = userBalance.querySelector('img[alt="Aqualis"]');
         if (aqualisIcon) {
-            // Le texte se trouve généralement après l'icône
             let balanceText = aqualisIcon.nextSibling;
             if (balanceText && balanceText.nodeType === Node.TEXT_NODE) {
-                balanceText.textContent = ` ${aqualisData.total}`;
+                balanceText.textContent = ` ${aqualisData.balance || 0}`;
             } else {
-                // Si pas de nœud texte, chercher un span ou autre élément
                 const balanceSpan = aqualisIcon.parentElement.querySelector('.balance-value, [id$="balance"]');
                 if (balanceSpan) {
-                    balanceSpan.textContent = aqualisData.total;
+                    balanceSpan.textContent = aqualisData.balance || 0;
                 }
             }
         }
     } catch (error) {
-        console.error('❌ Erreur lors de la récupération des Aqualis:', error);
+        console.error('❌ Erreur récupération Aqualis:', error);
         
-        // Fallback: afficher 0 ou un message d'erreur
-        const aqualisIcon = userBalance.querySelector('img[alt="Aqualis"]');
+        // Fallback: afficher 0
+        const aqualisIcon = userBalance?.querySelector('img[alt="Aqualis"]');
         if (aqualisIcon) {
             let balanceText = aqualisIcon.nextSibling;
             if (balanceText && balanceText.nodeType === Node.TEXT_NODE) {
@@ -417,7 +430,6 @@ function showUserMenu() {
         userMenu.classList.add('active');
         userMenuVisible = true;
         
-        // Fermer le menu si on clique ailleurs
         setTimeout(() => {
             document.addEventListener('click', closeMenuOnClickOutside);
         }, 100);
@@ -448,11 +460,10 @@ function showProfile() {
     hideUserMenu();
     
     if (!currentUser) {
-        alert('Erreur: Utilisateur non connecté');
+        showNotification('Erreur: Utilisateur non connecté', 'error');
         return;
     }
     
-    // Créer et afficher un modal de profil
     showProfileModal();
 }
 
@@ -460,22 +471,19 @@ function showHistory() {
     hideUserMenu();
     
     if (!currentUser) {
-        alert('Erreur: Utilisateur non connecté');
+        showNotification('Erreur: Utilisateur non connecté', 'error');
         return;
     }
     
-    // Rediriger vers la page économie
     goToEconomy();
 }
 
 function showProfileModal() {
-    // Supprimer le modal existant s'il y en a un
     const existingModal = document.getElementById('profile-modal');
     if (existingModal) {
         existingModal.remove();
     }
     
-    // Créer le modal
     const modal = document.createElement('div');
     modal.id = 'profile-modal';
     modal.style.cssText = `
@@ -503,10 +511,13 @@ function showProfileModal() {
         text-align: center;
     `;
     
+    const avatarUrl = currentUser.avatar ? 
+        `https://cdn.discordapp.com/avatars/${currentUser.discord_id}/${currentUser.avatar}.png` : 
+        'https://cdn.discordapp.com/embed/avatars/0.png';
+    
     modalContent.innerHTML = `
         <h2 style="color: var(--neon-green); margin-bottom: var(--spacing-lg);">Mon Profil</h2>
-        <img src="https://cdn.discordapp.com/avatars/${currentUser.discord_id}/${currentUser.avatar}.png" 
-             alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: var(--spacing-md);">
+        <img src="${avatarUrl}" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: var(--spacing-md);">
         <h3 style="color: var(--text-primary); margin-bottom: var(--spacing-sm);">${currentUser.username}</h3>
         <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Membre d'Atlant'ARK</p>
         <button onclick="closeProfileModal()" class="btn-primary" style="margin-top: var(--spacing-md);">
@@ -518,12 +529,13 @@ function showProfileModal() {
     document.body.appendChild(modal);
     
     // Fermer avec Escape
-    document.addEventListener('keydown', function closeOnEscape(e) {
+    const closeOnEscape = (e) => {
         if (e.key === 'Escape') {
             closeProfileModal();
             document.removeEventListener('keydown', closeOnEscape);
         }
-    });
+    };
+    document.addEventListener('keydown', closeOnEscape);
 }
 
 function closeProfileModal() {
@@ -538,107 +550,28 @@ function closeProfileModal() {
 // =============================================
 
 function goToEconomy() {
-    const token = localStorage.getItem('auth_token');
-    
-    if (!token || !currentUser) {
-        // Pas connecté - proposer la connexion
+    if (!currentUser) {
         if (confirm('Vous devez être connecté pour accéder à votre solde. Se connecter maintenant ?')) {
             loginWithDiscord();
         }
         return;
     }
     
-    // Connecté - aller à la page économie
     window.location.href = 'economie.html';
 }
 
-// Actualiser le solde (appelable depuis d'autres pages)
 async function refreshUserBalance() {
-    await updateUserBalance();
-    await updateUserAqualis();
+    if (!authInitialized || !currentUser) return;
+    
+    await Promise.all([
+        updateUserBalance().catch(err => console.warn('Balance refresh failed:', err)),
+        updateUserAqualis().catch(err => console.warn('Aqualis refresh failed:', err))
+    ]);
 }
 
-// Actualiser seulement les Aqualis
 async function refreshUserAqualis() {
-    await updateUserAqualis();
-}
-
-// =============================================
-//   GESTION DES REDIRECTIONS
-// =============================================
-
-function checkForRedirectMessage() {
-    const message = sessionStorage.getItem('balance_redirect_message') || 
-                   sessionStorage.getItem('economy_redirect_message');
-    
-    if (message) {
-        // Supprimer le message pour qu'il ne s'affiche qu'une fois
-        sessionStorage.removeItem('balance_redirect_message');
-        sessionStorage.removeItem('economy_redirect_message');
-        
-        // Afficher le message à l'utilisateur
-        showRedirectNotification(message);
-    }
-}
-
-function showRedirectNotification(message) {
-    // Créer une notification temporaire
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: rgba(255, 193, 7, 0.95);
-        color: #000;
-        padding: 1rem 1.5rem;
-        border-radius: var(--border-radius);
-        border-left: 4px solid #ffc107;
-        box-shadow: var(--shadow-lg);
-        z-index: 9999;
-        max-width: 350px;
-        font-weight: 500;
-        backdrop-filter: blur(10px);
-        animation: slideInFromRight 0.3s ease-out;
-    `;
-    
-    notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span>⚠️</span>
-            <span>${message}</span>
-            <button onclick="this.parentElement.parentElement.remove()" style="
-                background: none;
-                border: none;
-                font-size: 18px;
-                cursor: pointer;
-                margin-left: auto;
-                color: #000;
-                font-weight: bold;
-            ">×</button>
-        </div>
-    `;
-    
-    // Ajouter les styles CSS pour l'animation
-    if (!document.getElementById('notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.textContent = `
-            @keyframes slideInFromRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    document.body.appendChild(notification);
-    
-    // Supprimer automatiquement après 5 secondes
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.style.animation = 'slideInFromRight 0.3s ease-out reverse';
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 5000);
+    if (!authInitialized || !currentUser) return;
+    await updateUserAqualis().catch(err => console.warn('Aqualis refresh failed:', err));
 }
 
 // =============================================
@@ -654,36 +587,78 @@ async function loadServerStats() {
         }
     } catch (error) {
         console.error('Erreur chargement stats:', error);
-        // Garder les valeurs par défaut
     }
 }
 
 function updateServerStats(stats) {
-    // Mettre à jour le compteur de joueurs en ligne
-    const quickPlayers = document.getElementById('quick-players');
-    if (quickPlayers && stats.players_online) {
-        quickPlayers.textContent = stats.players_online;
-    }
+    const elements = {
+        'quick-players': stats.players_online,
+        'player-count': stats.players_online,
+        'uptime': stats.uptime,
+        'auctions': stats.active_auctions,
+        'registered-players': stats.registered_players
+    };
     
-    // Mettre à jour d'autres stats si nécessaire
-    const playerCount = document.getElementById('player-count');
-    if (playerCount && stats.players_online) {
-        playerCount.textContent = stats.players_online;
-    }
+    Object.entries(elements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element && value !== undefined) {
+            element.textContent = value;
+        }
+    });
+}
+
+// =============================================
+//   NOTIFICATIONS AMÉLIORÉES
+// =============================================
+
+function showNotification(message, type = 'info', duration = 4000) {
+    const notification = document.createElement('div');
+    const colors = {
+        success: '#00ff41',
+        error: '#ff4444', 
+        warning: '#ffaa00',
+        info: '#0099ff'
+    };
     
-    const uptime = document.getElementById('uptime');
-    if (uptime && stats.uptime) {
-        uptime.textContent = stats.uptime;
-    }
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${colors[type] || colors.info};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        z-index: 10000;
+        max-width: 350px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    `;
     
-    const auctions = document.getElementById('auctions');
-    if (auctions && stats.active_auctions !== undefined) {
-        auctions.textContent = stats.active_auctions;
-    }
+    notification.textContent = message;
+    document.body.appendChild(notification);
     
-    const registeredPlayers = document.getElementById('registered-players');
-    if (registeredPlayers && stats.registered_players) {
-        registeredPlayers.textContent = stats.registered_players;
+    // Animation d'entrée
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Suppression automatique
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+    }, duration);
+}
+
+function checkForRedirectMessage() {
+    const message = sessionStorage.getItem('balance_redirect_message') || 
+                   sessionStorage.getItem('economy_redirect_message');
+    
+    if (message) {
+        sessionStorage.removeItem('balance_redirect_message');
+        sessionStorage.removeItem('economy_redirect_message');
+        showNotification(message, 'warning');
     }
 }
 
@@ -699,81 +674,60 @@ function initializeEventListeners() {
         }
     });
     
-    // Gestion de l'URL pour l'auth callback OAuth2 CIA-LEVEL
+    // Gestion de l'URL pour l'auth callback
     const urlParams = new URLSearchParams(window.location.search);
-    const auth_success = urlParams.get('auth'); // Nouveau système sécurisé
-    const access_token = urlParams.get('access_token'); // Ancien système (compatibilité)
-    const refresh_token = urlParams.get('refresh_token'); // Ancien système (compatibilité)
-    const token = urlParams.get('token'); // Très ancien système
+    const auth_success = urlParams.get('auth');
+    const access_token = urlParams.get('access_token');
+    const refresh_token = urlParams.get('refresh_token');
+    const token = urlParams.get('token');
     const error = urlParams.get('error');
     
     if (auth_success === 'success') {
-        // 🔒 Nouveau système CIA-LEVEL: tokens dans cookies HttpOnly
         console.log('🔒 Connexion réussie avec cookies sécurisés');
         window.history.replaceState({}, document.title, window.location.pathname);
-        
-        // Vérification immédiate de l'authentification
-        setTimeout(() => {
-            checkAuthenticationStatus();
-        }, 100);
+        setTimeout(() => checkAuthenticationStatus(), 100);
         
     } else if (access_token && refresh_token) {
-        // ⚠️ Ancien système: migration vers cookies sécurisés
         console.log('⚠️ Migration vers système sécurisé...');
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('refresh_token', refresh_token);
         window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(() => checkAuthenticationStatus(), 100);
         
-        // Recharger l'état d'authentification
-        setTimeout(() => {
-            checkAuthenticationStatus();
-        }, 100);
     } else if (token) {
-        // Ancien système (compatibilité)
         localStorage.setItem('auth_token', token);
         window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(() => checkAuthenticationStatus(), 100);
         
-        // Recharger l'état d'authentification
-        setTimeout(() => {
-            checkAuthenticationStatus();
-        }, 100);
     } else if (error) {
-        // Gérer les erreurs d'authentification
         console.error('Erreur auth:', error);
-        showRedirectNotification('Erreur de connexion avec Discord');
+        showNotification('Erreur de connexion avec Discord', 'error');
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 }
 
 // =============================================
-//   FONCTIONS UTILITAIRES
+//   FONCTIONS UTILITAIRES AMÉLIORÉES
 // =============================================
 
-// Vérifier si l'utilisateur est connecté
 function isLoggedIn() {
-    // Vérifier si l'utilisateur est authentifié avec le nouveau ou l'ancien système
-    const hasNewTokens = localStorage.getItem('access_token') !== null;
-    const hasOldToken = localStorage.getItem('auth_token') !== null;
-    
-    return currentUser !== null && (hasNewTokens || hasOldToken);
+    const hasTokens = localStorage.getItem('access_token') || localStorage.getItem('auth_token');
+    return currentUser !== null && hasTokens !== null;
 }
 
-// Obtenir l'utilisateur actuel
 function getCurrentUser() {
     return currentUser;
 }
 
-// Obtenir le token d'authentification
 function getAuthToken() {
-    // Prioriser l'access token, puis fallback sur l'ancien système
     return localStorage.getItem('access_token') || localStorage.getItem('auth_token');
 }
 
-// Faire un appel API authentifié
-async function apiCall(endpoint, options = {}) {
+// Fonction apiCall améliorée avec retry automatique et gestion d'erreurs
+async function apiCall(endpoint, options = {}, retries = 1) {
     let token = getAuthToken();
     if (!token) {
-        throw new Error('Non authentifié');
+        throw new AuthError('Non authentifié', 'NO_TOKEN');
     }
     
     const makeRequest = async (authToken) => {
@@ -785,42 +739,42 @@ async function apiCall(endpoint, options = {}) {
             }
         };
         
-        return await fetch(`${API_BASE_URL}${endpoint}`, {
+        return await secureApiCall(endpoint, {
             ...options,
             headers: defaultOptions.headers
         });
     };
     
-    let response = await makeRequest(token);
-    
-    // Si le token est expiré et qu'on a un refresh token, essayer de le rafraîchir
-    if (response.status === 401 && localStorage.getItem('refresh_token')) {
-        console.log('🔄 Token expiré dans apiCall, tentative de rafraîchissement...');
-        const refreshed = await refreshAccessToken();
-        if (refreshed) {
-            // Réessayer avec le nouveau token
-            token = getAuthToken();
-            response = await makeRequest(token);
+    try {
+        let response = await makeRequest(token);
+        return await response.json();
+        
+    } catch (error) {
+        if (error instanceof AuthError && error.code === 'AUTH_REQUIRED' && retries > 0) {
+            // Token expiré, essayer de le rafraîchir
+            console.log('🔄 Token expiré dans apiCall, tentative de rafraîchissement...');
+            
+            const refreshed = await refreshAccessToken().catch(() => false);
+            if (refreshed) {
+                // Réessayer avec le nouveau token
+                return await apiCall(endpoint, options, retries - 1);
+            }
         }
-    }
-    
-    if (!response.ok) {
-        if (response.status === 401) {
-            // Token expiré définitivement
+        
+        if (error instanceof AuthError && error.code === 'AUTH_REQUIRED') {
+            // Token expiré définitivement, déconnecter
             logout();
-            throw new Error('Session expirée');
+            throw new AuthError('Session expirée', 'SESSION_EXPIRED');
         }
-        throw new Error(`Erreur API: ${response.status}`);
+        
+        throw error;
     }
-    
-    return response.json();
 }
 
 // =============================================
 //   EXPORTS POUR UTILISATION GLOBALE
 // =============================================
 
-// Rendre les fonctions disponibles globalement
 window.AuthModule = {
     loginWithDiscord,
     logout,
@@ -833,7 +787,8 @@ window.AuthModule = {
     isLoggedIn,
     getCurrentUser,
     getAuthToken,
-    apiCall
+    apiCall,
+    showNotification
 };
 
 // Exposer les fonctions principales directement sur window
@@ -842,14 +797,36 @@ window.logout = logout;
 window.toggleUserMenu = toggleUserMenu;
 window.showProfile = showProfile;
 window.showHistory = showHistory;
+window.closeProfileModal = closeProfileModal;
+window.showNotification = showNotification;
 
-// Actualisation périodique des stats (toutes les 30 secondes)
-setInterval(() => {
-    loadServerStats();
-    if (isLoggedIn()) {
-        updateUserBalance();
-        updateUserAqualis();
+// Actualisation périodique améliorée
+let periodicUpdateInterval;
+
+function startPeriodicUpdates() {
+    if (periodicUpdateInterval) {
+        clearInterval(periodicUpdateInterval);
     }
-}, 30000);
+    
+    periodicUpdateInterval = setInterval(() => {
+        if (authInitialized) {
+            loadServerStats().catch(err => console.warn('Periodic stats update failed:', err));
+            
+            if (isLoggedIn()) {
+                refreshUserBalance().catch(err => console.warn('Periodic balance update failed:', err));
+            }
+        }
+    }, 30000); // 30 secondes
+}
 
-console.log('✅ Module d\'authentification chargé');
+// Démarrer les mises à jour périodiques
+startPeriodicUpdates();
+
+// Nettoyer lors du déchargement de la page
+window.addEventListener('beforeunload', () => {
+    if (periodicUpdateInterval) {
+        clearInterval(periodicUpdateInterval);
+    }
+});
+
+console.log('✅ Module d\'authentification v2.1 chargé');
