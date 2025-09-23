@@ -212,8 +212,15 @@ async function updateUserAqualis() {
 
     try {
         console.log(`🔄 Récupération Aqualis pour user_id: ${currentUser.discord_id}`);
-        // Utilisation de l'endpoint de test pour le moment
-        const aqualisResponse = await fetch(`${API_BASE_URL}/api/user/aqualis/test?user_id=${currentUser.discord_id}`);
+        
+        // Utilisation de l'endpoint authentifié normal
+        const token = localStorage.getItem('auth_token');
+        const aqualisResponse = await fetch(`${API_BASE_URL}/api/user/aqualis`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
         
         if (aqualisResponse.ok) {
             const aqualisData = await aqualisResponse.json();
