@@ -6,6 +6,9 @@
 // Configuration API
 const API_BASE_URL = 'https://atlantark-token.up.railway.app';
 
+// Export global pour partage avec d'autres scripts
+window.API_BASE_URL = API_BASE_URL;
+
 // Variables globales
 let currentUser = null;
 let userMenuVisible = false;
