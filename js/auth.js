@@ -171,13 +171,23 @@ async function updateUserBalance() {
 // Fonction pour mettre à jour les Aqualis
 async function updateUserAqualis() {
     const userBalance = document.getElementById('user-balance');
-    if (!userBalance || !isLoggedIn()) return;
+    if (!userBalance || !isLoggedIn() || !currentUser || !currentUser.discord_id) {
+        console.log('🔍 updateUserAqualis: conditions non remplies', {
+            userBalance: !!userBalance,
+            isLoggedIn: isLoggedIn(),
+            currentUser: !!currentUser,
+            discord_id: currentUser?.discord_id
+        });
+        return;
+    }
 
     try {
+        console.log(`🔄 Récupération Aqualis pour user_id: ${currentUser.discord_id}`);
         const aqualisResponse = await fetch(`${API_BASE_URL}/api/user/aqualis?user_id=${currentUser.discord_id}`);
         
         if (aqualisResponse.ok) {
             const aqualisData = await aqualisResponse.json();
+            console.log('✅ Données Aqualis reçues:', aqualisData);
             
             // Trouver l'élément du solde Aqualis dans le widget utilisateur
             const aqualisIcon = userBalance.querySelector('img[alt="Aqualis"]');
@@ -194,9 +204,11 @@ async function updateUserAqualis() {
                     }
                 }
             }
+        } else {
+            console.warn(`⚠️ Échec récupération Aqualis: ${aqualisResponse.status} ${aqualisResponse.statusText}`);
         }
     } catch (error) {
-        console.error('Erreur lors de la récupération des Aqualis:', error);
+        console.error('❌ Erreur lors de la récupération des Aqualis:', error);
     }
 }
 
