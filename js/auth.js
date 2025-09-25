@@ -675,12 +675,14 @@ function initializeEventListeners() {
     });
     
     // Gestion de l'URL pour l'auth callback
+    console.log('🔍 DEBUG - URL complète:', window.location.href);
     const urlParams = new URLSearchParams(window.location.search);
     const auth_success = urlParams.get('auth');
     const access_token = urlParams.get('access_token');
     const refresh_token = urlParams.get('refresh_token');
     const token = urlParams.get('token');
     const error = urlParams.get('error');
+    console.log('🔍 DEBUG - Params extraits:', { auth_success, access_token, refresh_token, token, error });
     
     if (auth_success === 'success') {
         console.log('🔒 Connexion réussie avec cookies sécurisés');
